@@ -1,39 +1,41 @@
-import { useAppState } from "../../hooks/useAppState";
-import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
-import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
-import { IconButton } from "@mui/material";
-import { MouseEvent } from "react";
+import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded"
+import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded"
+import { IconButton } from "@mui/material"
+import { MouseEvent } from "react"
+import { useAppState } from "../../hooks/useAppState"
 
 interface LocaleArrowProps {
-  type: "prev" | "next";
-  onClick?(e?: MouseEvent): void;
+	type: "prev" | "next";
+
+	onClick?(e?: MouseEvent): void;
 }
-const LocaleArrow = ({ type, onClick }: LocaleArrowProps) => {
-  const { direction } = useAppState();
 
-  let Arrow = NavigateNextRoundedIcon;
-  if (type === "prev") {
-    Arrow =
-      direction === "rtl" ? NavigateNextRoundedIcon : NavigateBeforeRoundedIcon;
-  } else if (type === "next") {
-    Arrow =
-      direction === "rtl" ? NavigateBeforeRoundedIcon : NavigateNextRoundedIcon;
-  }
+const LocaleArrow = ({type, onClick}: LocaleArrowProps) => {
+	const {direction} = useAppState()
 
-  return (
-    <IconButton
-      style={{ padding: 2 }}
-      onClick={onClick}
-      onDragOver={(e) => {
-        e.preventDefault();
-        if (onClick) {
-          onClick();
-        }
-      }}
-    >
-      <Arrow />
-    </IconButton>
-  );
-};
+	let Arrow = NavigateNextRoundedIcon
+	if ( type === "prev" ) {
+		Arrow =
+			direction === "rtl" ? NavigateNextRoundedIcon : NavigateBeforeRoundedIcon
+	} else if ( type === "next" ) {
+		Arrow =
+			direction === "rtl" ? NavigateBeforeRoundedIcon : NavigateNextRoundedIcon
+	}
 
-export { LocaleArrow };
+	return (
+		<IconButton
+			style={{padding: 2}}
+			onClick={onClick}
+			onDragOver={(e) => {
+				e.preventDefault()
+				if ( onClick ) {
+					onClick()
+				}
+			}}
+		>
+			<Arrow/>
+		</IconButton>
+	)
+}
+
+export { LocaleArrow }

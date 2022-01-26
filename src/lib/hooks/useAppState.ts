@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import { stateContext, StateContext } from "../context/state/stateContext";
+import { useContext } from "react"
+import { stateContext, StateContext } from "../context/state/stateContext"
 
 const useAppState = (): stateContext => {
-  const state = useContext(StateContext);
+	const state = useContext(StateContext)
 
-  return state;
-};
+	return state
+}
 
-export { useAppState };
+export { useAppState }

@@ -1,64 +1,65 @@
-import { ReactChild } from "react";
-import { useAppState } from "../../hooks/useAppState";
-import { DefaultRecourse } from "../../types";
-import { ResourceHeader } from "./ResourceHeader";
-import { ButtonTabProps, ButtonTabs } from "./Tabs";
+import { ReactChild } from "react"
+import { useAppState } from "../../hooks/useAppState"
+import { DefaultRecourse } from "../../types"
+import { ResourceHeader } from "./ResourceHeader"
+import { ButtonTabProps, ButtonTabs } from "./Tabs"
 
 interface WithResourcesProps {
-  renderChildren(resource: DefaultRecourse): ReactChild;
+	renderChildren(resource: DefaultRecourse): ReactChild;
 }
-const WithResources = ({ renderChildren }: WithResourcesProps) => {
-  const { resourceViewMode } = useAppState();
 
-  if (resourceViewMode === "tabs") {
-    return <ResourcesTabTables renderChildren={renderChildren} />;
-  } else {
-    return <ResourcesTables renderChildren={renderChildren} />;
-  }
-};
+const WithResources = ({renderChildren}: WithResourcesProps) => {
+	const {resourceViewMode} = useAppState()
 
-const ResourcesTables = ({ renderChildren }: WithResourcesProps) => {
-  const { resources, resourceFields } = useAppState();
+	if ( resourceViewMode === "tabs" ) {
+		return <ResourcesTabTables renderChildren={renderChildren}/>
+	} else {
+		return <ResourcesTables renderChildren={renderChildren}/>
+	}
+}
 
-  return (
-    <>
-      {resources.map((res: DefaultRecourse, i: number) => (
-        <div key={`${res[resourceFields.idField]}_${i}`}>
-          <ResourceHeader resource={res} />
-          {renderChildren(res)}
-        </div>
-      ))}
-    </>
-  );
-};
+const ResourcesTables = ({renderChildren}: WithResourcesProps) => {
+	const {resources, resourceFields} = useAppState()
 
-const ResourcesTabTables = ({ renderChildren }: WithResourcesProps) => {
-  const { resources, resourceFields, selectedResource, handleState } =
-    useAppState();
+	return (
+		<>
+			{resources.map((res: DefaultRecourse, i: number) => (
+				<div key={`${res[resourceFields.idField]}_${i}`}>
+					<ResourceHeader resource={res}/>
+					{renderChildren(res)}
+				</div>
+			))}
+		</>
+	)
+}
 
-  const tabs: ButtonTabProps[] = resources.map((res) => {
-    return {
-      id: res[resourceFields.idField],
-      label: <ResourceHeader resource={res} />,
-      component: <>{renderChildren(res)}</>,
-    };
-  });
+const ResourcesTabTables = ({renderChildren}: WithResourcesProps) => {
+	const {resources, resourceFields, selectedResource, handleState} =
+		useAppState()
 
-  const setTab = (tab: DefaultRecourse["assignee"]) => {
-    handleState(tab, "selectedResource");
-  };
+	const tabs: ButtonTabProps[] = resources.map((res) => {
+		return {
+			id: res[resourceFields.idField],
+			label: <ResourceHeader resource={res}/>,
+			component: <>{renderChildren(res)}</>,
+		}
+	})
 
-  return (
-    <ButtonTabs
-      tabs={tabs}
-      tab={selectedResource || resources[0][resourceFields.idField]}
-      setTab={setTab}
-      style={{ display: "grid" }}
-    />
-  );
-};
+	const setTab = (tab: DefaultRecourse["assignee"]) => {
+		handleState(tab, "selectedResource")
+	}
+
+	return (
+		<ButtonTabs
+			tabs={tabs}
+			tab={selectedResource || resources[0][resourceFields.idField]}
+			setTab={setTab}
+			style={{display: "grid"}}
+		/>
+	)
+}
 WithResources.defaultProps = {
-  span: 1,
-};
+	span: 1,
+}
 
-export { WithResources };
+export { WithResources }
