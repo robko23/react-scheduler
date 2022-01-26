@@ -41,8 +41,8 @@ const WeekDateBtn = ({
 		onChange(firstDayNextWeek, "selectedDate")
 	}
 	return (
-		<div>
-			<LocaleArrow type="prev" onClick={handlePrev}/>
+		<>
+			<LocaleArrow type="prev" onClick={handlePrev} tooltip={'Previous week'}/>
 			<DateProvider>
 				<DatePicker
 					open={open}
@@ -66,8 +66,8 @@ const WeekDateBtn = ({
 					)}
 				/>
 			</DateProvider>
-			<LocaleArrow type="next" onClick={handleNext}/>
-		</div>
+			<LocaleArrow type="next" onClick={handleNext} tooltip={'Next week'}/>
+		</>
 	)
 }
 

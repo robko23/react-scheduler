@@ -1,5 +1,6 @@
 import { DialogProps, GridSize } from "@mui/material"
 import { Locale } from "date-fns"
+import { ForwardedRef } from "react"
 import { SelectOption } from "./components/inputs/SelectInput"
 import { View } from "./components/nav/Navigation"
 import { DayProps } from "./views/Day"
@@ -37,7 +38,7 @@ export interface CellRenderedProps {
 	day: Date;
 	start: Date;
 	end: Date;
-	height: number;
+	ref?: ForwardedRef<HTMLButtonElement>
 
 	onClick(): void;
 }
@@ -148,7 +149,7 @@ export interface SchedulerProps {
 	/**Min height of table
 	 * @default 600
 	 */
-	height: number;
+	height: number | string;
 	/** Initial view to load */
 	view: View;
 	/**Month view settings */

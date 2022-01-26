@@ -257,12 +257,12 @@ const EventItem = ({
 					height: "100%",
 					display: "block",
 					background: event.disabled
-						? "#d0d0d0"
+						? theme.palette.action.disabled
 						: event.color || theme.palette.primary.main,
 					color: event.disabled
-						? "#808080"
+						? theme.palette.text.disabled
 						: theme.palette.primary.contrastText,
-					cursor: event.disabled ? "not-allowed" : "pointer",
+					cursor: event.disabled ? "inherit" : "pointer",
 					overflow: "hidden",
 				}}
 			>

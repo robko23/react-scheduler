@@ -1,4 +1,5 @@
-import { differenceInMinutes, setHours } from "date-fns"
+import { Paper } from "@mui/material"
+import { differenceInMinutes, set } from "date-fns"
 import { Fragment } from "react"
 import { BORDER_HEIGHT } from "../../helpers/constants"
 import { traversCrossingEvents } from "../../helpers/generals"
@@ -29,15 +30,19 @@ const TodayEvents = ({
 			{todayEvents.map((event, i) => {
 				const height =
 					differenceInMinutes(event.end, event.start) * minuteHeight
-				const minituesFromTop = differenceInMinutes(
+				const minutesFromTop = differenceInMinutes(
 					event.start,
-					setHours(today, startHour)
+					set(today, {
+						hours: startHour,
+						minutes: 0,
+						seconds: 0
+					})
 				)
-				const topSpace = minituesFromTop * minuteHeight //+ headerHeight;
+				const topSpace = minutesFromTop * minuteHeight //+ headerHeight;
 				/**
 				 * Add border height since grid has a 1px border
 				 */
-				const slotsFromTop = minituesFromTop / step
+				const slotsFromTop = minutesFromTop / step
 
 				const borderFactor = slotsFromTop + BORDER_HEIGHT
 				const top = topSpace + borderFactor
@@ -49,10 +54,11 @@ const TodayEvents = ({
 				crossingIds.push(event.event_id)
 
 				return (
-					<div
+					<Paper
 						key={event.event_id}
 						className="rs__event__item"
-						style={{
+						elevation={2}
+						sx={{
 							height,
 							top,
 							width: crossingEvents.length
@@ -65,7 +71,7 @@ const TodayEvents = ({
 						}}
 					>
 						<EventItem event={event}/>
-					</div>
+					</Paper>
 				)
 			})}
 		</Fragment>

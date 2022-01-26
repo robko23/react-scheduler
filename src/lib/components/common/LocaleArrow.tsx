@@ -1,6 +1,6 @@
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded"
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded"
-import { IconButton } from "@mui/material"
+import { IconButton, Tooltip } from "@mui/material"
 import { MouseEvent } from "react"
 import { useAppState } from "../../hooks/useAppState"
 
@@ -8,9 +8,11 @@ interface LocaleArrowProps {
 	type: "prev" | "next";
 
 	onClick?(e?: MouseEvent): void;
+
+	tooltip: string
 }
 
-const LocaleArrow = ({type, onClick}: LocaleArrowProps) => {
+const LocaleArrow = ({type, onClick, tooltip}: LocaleArrowProps) => {
 	const {direction} = useAppState()
 
 	let Arrow = NavigateNextRoundedIcon
@@ -23,18 +25,20 @@ const LocaleArrow = ({type, onClick}: LocaleArrowProps) => {
 	}
 
 	return (
-		<IconButton
-			style={{padding: 2}}
-			onClick={onClick}
-			onDragOver={(e) => {
-				e.preventDefault()
-				if ( onClick ) {
-					onClick()
-				}
-			}}
-		>
-			<Arrow/>
-		</IconButton>
+		<Tooltip title={tooltip} describeChild>
+			<IconButton
+				style={{padding: 2}}
+				onClick={onClick}
+				onDragOver={(e) => {
+					e.preventDefault()
+					if ( onClick ) {
+						onClick()
+					}
+				}}
+			>
+				<Arrow/>
+			</IconButton>
+		</Tooltip>
 	)
 }
 

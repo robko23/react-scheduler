@@ -1,5 +1,5 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import { Button, IconButton, MenuItem, MenuList, Popover, useMediaQuery, useTheme, } from "@mui/material"
+import { Button, IconButton, MenuItem, MenuList, Popover, Toolbar, useMediaQuery, useTheme, } from "@mui/material"
 import { Fragment, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { DayDateBtn } from "./DayDateBtn"
@@ -43,18 +43,20 @@ const Navigation = () => {
 	}
 
 	return (
-		<div
+		<Toolbar
 			style={{
 				display: "flex",
 				justifyContent: "space-between",
 				alignItems: "center",
 			}}
 		>
-			{renderDateSelector()}
 			<div>
+				{renderDateSelector()}
 				<Button onClick={() => handleState(new Date(), "selectedDate")}>
 					Today
 				</Button>
+			</div>
+			<div>
 				{views.length > 1 &&
 				(isDesktop ? (
 					views.map((v) => (
@@ -113,7 +115,7 @@ const Navigation = () => {
 					</Fragment>
 				))}
 			</div>
-		</div>
+		</Toolbar>
 	)
 }
 

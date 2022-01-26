@@ -4,8 +4,6 @@ import { App } from "./App"
 import "./index.css"
 
 ReactDOM.render(
-	<div style={{margin: 10}}>
-		<App/>
-	</div>,
+	<App/>,
 	document.getElementById("root")
 )

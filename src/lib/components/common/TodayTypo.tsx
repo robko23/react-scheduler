@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material"
 import { format, isToday } from "date-fns"
+import { useAppState } from "../../hooks/useAppState"
 
 interface TodayTypoProps {
 	date: Date;
@@ -8,6 +9,7 @@ interface TodayTypoProps {
 }
 
 const TodayTypo = ({date, onClick}: TodayTypoProps) => {
+	const {locale} = useAppState()
 	return (
 		<div>
 			<Typography
@@ -30,7 +32,7 @@ const TodayTypo = ({date, onClick}: TodayTypoProps) => {
 					fontSize: 11,
 				}}
 			>
-				{format(date, "eee")}
+				{format(date, "eee", {locale})}
 			</Typography>
 		</div>
 	)

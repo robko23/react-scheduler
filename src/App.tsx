@@ -1,46 +1,41 @@
-import { useState } from "react"
 // import arSA from "date-fns/locale/ar-SA";
+import { cs } from 'date-fns/locale'
 import { Scheduler } from "./lib/Scheduler"
 import { EVENTS } from "./model/events"
 
 const App = () => {
-	const [ events, setEvents ] = useState(EVENTS)
+	// const [ events, setEvents ] = useState(EVENTS)
 
 	return (
 		<Scheduler
-			dialogMaxWidth="sm"
-			// loading={loading}
-			// view="month"
-			events={events}
-			selectedDate={new Date("2021 5 1")}
-			// height={800}
-			// week={{
-			//   weekDays: [0, 1, 2, 3, 4, 5],
-			//   weekStartOn: 6,
-			//   startHour: 7,
-			//   endHour: 22,
-			//   step: 60,
-			//   cellRenderer: () => {
-			//     return <>week</>;
-			//   },
-			// }}
-			// month={{
-			//   weekDays: [0, 1, 2, 3, 4, 5],
-			//   weekStartOn: 6,
-			//   startHour: 7,
-			//   endHour: 15,
-			//   cellRenderer: () => {
-			//     return <h1>month</h1>;
-			//   },
-			// }}
-			// day={{
-			//   startHour: 6,
-			//   endHour: 14,
-			//   step: 60,
-			//   cellRenderer: () => {
-			//     return <h1>DAY</h1>;
-			//   },
-			// }}
+			// dialogMaxWidth="sm"
+			// loading
+			view="month"
+			events={EVENTS}
+			locale={cs}
+			selectedDate={new Date()}
+			height={'100%'}
+			week={{
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+				weekStartOn: 1,
+				startHour: 0,
+				endHour: 23,
+				step: 60,
+				// cellRenderer: () => {
+				//   return <>week</>;
+				// },
+			}}
+			month={{
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+				weekStartOn: 1,
+				startHour: 7,
+				endHour: 15,
+			}}
+			day={{
+				startHour: 9,
+				endHour: 14,
+				step: 60,
+			}}
 			// day={{
 			//   startHour: 8,
 			//   endHour: 18,

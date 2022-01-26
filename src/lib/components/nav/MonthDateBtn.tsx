@@ -22,17 +22,20 @@ const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
 	const handleChange = (e: Date | null, k?: string) => {
 		onChange(e || new Date(), "selectedDate")
 	}
+
 	const handlePrev = () => {
 		const prevMonth = currentMonth - 1
 		onChange(setMonth(selectedDate, prevMonth), "selectedDate")
 	}
+
 	const handleNext = () => {
 		const nextMonth = currentMonth + 1
 		onChange(setMonth(selectedDate, nextMonth), "selectedDate")
 	}
+
 	return (
-		<div>
-			<LocaleArrow type="prev" onClick={handlePrev}/>
+		<>
+			<LocaleArrow type="prev" onClick={handlePrev} tooltip={'Previous month'}/>
 			<DateProvider>
 				<DatePicker
 					open={open}
@@ -52,8 +55,8 @@ const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
 					)}
 				/>
 			</DateProvider>
-			<LocaleArrow type="next" onClick={handleNext}/>
-		</div>
+			<LocaleArrow type="next" onClick={handleNext} tooltip={'Next month'}/>
+		</>
 	)
 }
 

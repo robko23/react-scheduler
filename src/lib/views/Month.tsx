@@ -9,13 +9,13 @@ import {
 	setHours,
 	startOfMonth,
 } from "date-fns"
-import { Fragment, useCallback, useEffect } from "react"
+import React, { Fragment, useCallback, useEffect } from "react"
 import { Cell } from "../components/common/Cell"
 import { WithResources } from "../components/common/WithResources"
 import MonthEvents from "../components/events/MonthEvents"
 import { getResourcedEvents } from "../helpers/generals"
 import { useAppState } from "../hooks/useAppState"
-import { TableGrid } from "../styles/styles"
+import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
 import { CellRenderedProps, DayHours, DefaultRecourse } from "../types"
 
 export type WeekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -33,7 +33,6 @@ const Month = () => {
 	const {
 		month,
 		selectedDate,
-		height,
 		events,
 		handleGotoDay,
 		remoteEvents,
@@ -43,6 +42,7 @@ const Month = () => {
 		resources,
 		resourceFields,
 		fields,
+		locale
 	} = useAppState()
 
 	const {weekStartOn, weekDays, startHour, endHour, cellRenderer} = month!
@@ -56,9 +56,9 @@ const Month = () => {
 		{weekStartsOn: weekStartOn}
 	)
 	const daysList = weekDays.map((d) => addDays(eachWeekStart[0], d))
-	const CELL_HEIGHT = height / eachWeekStart.length
 	const theme = useTheme()
 
+	//region Remote events
 	const fetchEvents = useCallback(async () => {
 		try {
 			triggerLoading(true)
@@ -86,6 +86,7 @@ const Month = () => {
 		}
 		// eslint-disable-next-line
 	}, [ fetchEvents ])
+	//endregion
 
 	const renderCells = (resource?: DefaultRecourse) => {
 		let recousedEvents = events
@@ -109,74 +110,74 @@ const Month = () => {
 					`${format(setHours(today, endHour), "yyyy MM dd hh:mm a")}`
 				)
 				const field = resourceFields.idField
+
 				return (
-					<span
-						style={{height: CELL_HEIGHT}}
+					<GridCell
 						key={d.toString()}
-						className="rs__cell"
 					>
-            {cellRenderer ? (
-				cellRenderer({
-					day: selectedDate,
-					start,
-					end,
-					height: CELL_HEIGHT,
-					onClick: () =>
-						triggerDialog(true, {
-							start,
-							end,
-							[field]: resource ? resource[field] : null,
-						}),
-					[field]: resource ? resource[field] : null,
-				})
-			) : (
-				<Cell
-					start={start}
-					end={end}
-					resourceKey={field}
-					resourceVal={resource ? resource[field] : null}
-				/>
-			)}
+						{cellRenderer ? (
+								cellRenderer({
+									day: selectedDate,
+									start,
+									end,
+									onClick: () =>
+										triggerDialog(true, {
+											start,
+											end,
+											[field]: resource ? resource[field] : null,
+										}),
+									[field]: resource ? resource[field] : null,
+								})
+							) :
+							(
+								<Cell
+									start={start}
+									end={end}
+									resourceKey={field}
+									resourceVal={resource ? resource[field] : null}
+								/>
+							)
+						}
 
 						<Fragment>
-              <Avatar
-				  style={{
-					  width: 27,
-					  height: 27,
-					  position: "absolute",
-					  top: 0,
-					  background: isToday(today)
-						  ? theme.palette.secondary.main
-						  : "transparent",
-					  color: isToday(today)
-						  ? theme.palette.secondary.contrastText
-						  : "",
-					  marginBottom: 2,
-				  }}
-			  >
-                <Typography
-					color={
-						!isSameMonth(today, monthStart) ? "#ccc" : "textPrimary"
-					}
-					className="rs__hover__op"
-					onClick={(e) => {
-						e.stopPropagation()
-						handleGotoDay(today)
-					}}
-				>
-                  {format(today, "dd")}
-                </Typography>
-              </Avatar>
-              <MonthEvents
-				  events={recousedEvents}
-				  today={today}
-				  eachWeekStart={eachWeekStart}
-				  daysList={daysList}
-				  onViewMore={handleGotoDay}
-				  cellHeight={CELL_HEIGHT}
-			  />
-            </Fragment>
-          </span>
+							<Avatar
+								sx={{
+									width: 28,
+									height: 28,
+									position: "absolute",
+									top: 0,
+									background: isToday(today)
+										? theme.palette.secondary.main
+										: "transparent",
+									color: isToday(today)
+										? theme.palette.getContrastText(theme.palette.secondary.main)
+										: theme.palette.text.primary,
+									marginBottom: 2,
+								}}
+							>
+								<Typography
+									color={
+										!isSameMonth(today, monthStart) ? theme.palette.text.disabled : "inherit"
+									}
+									className="rs__hover__op"
+									onClick={(e: React.MouseEvent<HTMLSpanElement>) => {
+										e.stopPropagation()
+										handleGotoDay(today)
+									}}
+								>
+									{format(today, "dd")}
+								</Typography>
+							</Avatar>
+							<MonthEvents
+								events={recousedEvents}
+								today={today}
+								eachWeekStart={eachWeekStart}
+								daysList={daysList}
+								onViewMore={handleGotoDay}
+								cellHeight={120}
+							/>
+						</Fragment>
+					</GridCell>
 				)
 			})
 
@@ -190,11 +191,11 @@ const Month = () => {
 			<TableGrid days={daysList.length} indent="0">
 				{/* Header Days */}
 				{daysList.map((date, i) => (
-					<span key={i} className="rs__cell rs__header">
-            <Typography align="center" variant="body2">
-              {format(date, "EE")}
-            </Typography>
-          </span>
+					<GridHeaderCell key={i}>
+						<Typography align="center" variant="h6">
+							{format(date, "eee", {locale})}
+						</Typography>
+					</GridHeaderCell>
 				))}
 
 				{renderCells(resource)}
@@ -202,11 +203,9 @@ const Month = () => {
 		)
 	}
 
-	return resources.length ? (
-		<WithResources renderChildren={renderTable}/>
-	) : (
-		renderTable()
-	)
+	return resources.length > 0 ?
+		<WithResources renderChildren={renderTable}/> : renderTable()
+
 }
 
 export { Month }

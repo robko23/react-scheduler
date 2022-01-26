@@ -1,11 +1,9 @@
-import { Typography } from "@mui/material"
+import { Paper } from "@mui/material"
 import {
 	addDays,
-	addMinutes,
 	differenceInDays,
 	eachMinuteOfInterval,
 	endOfDay,
-	format,
 	isAfter,
 	isBefore,
 	isSameDay,
@@ -16,16 +14,15 @@ import {
 	startOfDay,
 	startOfWeek,
 } from "date-fns"
-import { Fragment, useCallback, useEffect } from "react"
-import { Cell } from "../components/common/Cell"
+import { useCallback, useEffect } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import { WithResources } from "../components/common/WithResources"
 import EventItem from "../components/events/EventItem"
-import TodayEvents from "../components/events/TodayEvents"
+import { RowWithTime } from "../components/week/RowWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { calcCellHeight, calcMinuteHeight, getResourcedEvents, } from "../helpers/generals"
+import { getResourcedEvents, } from "../helpers/generals"
 import { useAppState } from "../hooks/useAppState"
-import { TableGrid } from "../styles/styles"
+import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
 import { CellRenderedProps, DayHours, DefaultRecourse, ProcessedEvent, } from "../types"
 import { WeekDays } from "./Month"
 
@@ -43,9 +40,7 @@ const Week = () => {
 	const {
 		week,
 		selectedDate,
-		height,
 		events,
-		triggerDialog,
 		handleGotoDay,
 		remoteEvents,
 		triggerLoading,
@@ -53,12 +48,9 @@ const Week = () => {
 		resources,
 		resourceFields,
 		fields,
-		direction,
-		locale,
 	} = useAppState()
 
-	const {weekStartOn, weekDays, startHour, endHour, step, cellRenderer} =
-		week!
+	const {weekStartOn, weekDays, startHour, endHour, step, cellRenderer} = week!
 	const _weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
 	const daysList = weekDays.map((d) => addDays(_weekStart, d))
 	const weekStart = startOfDay(daysList[0])
@@ -72,10 +64,11 @@ const Week = () => {
 		},
 		{step: step}
 	)
-	const CELL_HEIGHT = calcCellHeight(height, hours.length)
-	const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step)
+	// const CELL_HEIGHT = calcCellHeight(height, hours.length)
+	// const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step)
 	const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT
 
+	//region Remote events
 	const fetchEvents = useCallback(async () => {
 		try {
 			triggerLoading(true)
@@ -98,6 +91,7 @@ const Week = () => {
 		}
 		// eslint-disable-next-line
 	}, [ fetchEvents ])
+	//endregion
 
 	const renderMultiDayEvents = (events: ProcessedEvent[], today: Date) => {
 		const isFirstDayInWeek = isSameDay(weekStart, today)
@@ -140,10 +134,11 @@ const Week = () => {
 			}
 
 			return (
-				<div
+				<Paper
 					key={event.event_id}
 					className="rs__multi_day"
-					style={{
+					elevation={2}
+					sx={{
 						top: index * MULTI_SPACE + 45,
 						width: `${100 * eventLength}%`,
 					}}
@@ -154,15 +149,15 @@ const Week = () => {
 						hasNext={hasNext}
 						multiday
 					/>
-				</div>
+				</Paper>
 			)
 		})
 	}
 
 	const renderTable = (resource?: DefaultRecourse) => {
-		let recousedEvents = events
+		let resourcedEvents = events
 		if ( resource ) {
-			recousedEvents = getResourcedEvents(
+			resourcedEvents = getResourcedEvents(
 				events,
 				resource,
 				resourceFields,
@@ -180,106 +175,41 @@ const Week = () => {
 					})
 				)
 		)
+
 		// Equalizing multi-day section height
 		const headerHeight = MULTI_SPACE * allWeekMulti.length + 45
 		return (
 			<TableGrid days={daysList.length}>
+
+				{/*Empty Cell*/}
+				<GridCell/>
+
 				{/* Header days */}
-				<span className="rs__cell"></span>
 				{daysList.map((date, i) => (
-					<span
+					<GridHeaderCell
+						today={isToday(date)}
 						key={i}
-						className={`rs__cell rs__header ${
-							isToday(date) ? "rs__today_cell" : ""
-						}`}
-						style={{height: headerHeight}}
-					>
-            <TodayTypo date={date} onClick={handleGotoDay}/>
-						{renderMultiDayEvents(recousedEvents, date)}
-          </span>
+						sx={{height: headerHeight}}>
+						<TodayTypo date={date} onClick={handleGotoDay}/>
+						{renderMultiDayEvents(resourcedEvents, date)}
+					</GridHeaderCell>
 				))}
 
 				{/* Time Cells */}
-				{hours.map((h, i) => (
-					<Fragment key={i}>
-            <span
-				style={{height: CELL_HEIGHT}}
-				className="rs__cell rs__header rs__time"
-			>
-              <Typography variant="caption">
-                {format(h, "hh:mm a", {locale: locale})}
-              </Typography>
-            </span>
-						{daysList.map((date, ii) => {
-							const start = new Date(
-								`${format(date, "yyyy MM dd")} ${format(h, "hh:mm a")}`
-							)
-							const end = new Date(
-								`${format(date, "yyyy MM dd")} ${format(
-									addMinutes(h, step),
-									"hh:mm a"
-								)}`
-							)
-							const field = resourceFields.idField
-							return (
-								<span
-									key={ii}
-									className={`rs__cell ${
-										isToday(date) ? "rs__today_cell" : ""
-									}`}
-								>
-                  {/* Events of each day - run once on the top hour column */}
-									{i === 0 && (
-										<TodayEvents
-											todayEvents={recousedEvents
-												.filter(
-													(e) =>
-														isSameDay(date, e.start) &&
-														!differenceInDays(e.end, e.start)
-												)
-												.sort((a, b) => a.end.getTime() - b.end.getTime())}
-											today={date}
-											minuteHeight={MINUTE_HEIGHT}
-											startHour={startHour}
-											step={step}
-											direction={direction}
-										/>
-									)}
-									{cellRenderer ? (
-										cellRenderer({
-											day: date,
-											start,
-											end,
-											height: CELL_HEIGHT,
-											onClick: () =>
-												triggerDialog(true, {
-													start,
-													end,
-													[field]: resource ? resource[field] : null,
-												}),
-											[field]: resource ? resource[field] : null,
-										})
-									) : (
-										<Cell
-											start={start}
-											end={end}
-											resourceKey={field}
-											resourceVal={resource ? resource[field] : null}
-										/>
-									)}
-                </span>
-							)
-						})}
-					</Fragment>
-				))}
+				<RowWithTime
+					daysList={daysList}
+					hours={hours}
+					resourcedEvents={resourcedEvents}
+					startHour={startHour}
+					step={step}
+					cellRenderer={cellRenderer}
+				/>
 			</TableGrid>
 		)
 	}
+
 	return resources.length ? (
-		<WithResources renderChildren={renderTable}/>
-	) : (
-		renderTable()
-	)
+		<WithResources renderChildren={renderTable}/>) : (renderTable())
 }
 
 export { Week }

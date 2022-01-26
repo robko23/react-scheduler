@@ -25,13 +25,15 @@ const DayDateBtn = ({selectedDate, onChange}: DayDateBtnProps) => {
 		const prevDay = addDays(selectedDate, -1)
 		onChange(prevDay, "selectedDate")
 	}
+
 	const handleNext = () => {
 		const nexDay = addDays(selectedDate, 1)
 		onChange(nexDay, "selectedDate")
 	}
+
 	return (
-		<div>
-			<LocaleArrow type="prev" onClick={handlePrev}/>
+		<>
+			<LocaleArrow type="prev" onClick={handlePrev} tooltip={'Previous day'}/>
 			<DateProvider>
 				<DatePicker
 					open={open}
@@ -51,8 +53,8 @@ const DayDateBtn = ({selectedDate, onChange}: DayDateBtnProps) => {
 					)}
 				/>
 			</DateProvider>
-			<LocaleArrow type="next" onClick={handleNext}/>
-		</div>
+			<LocaleArrow type="next" onClick={handleNext} tooltip={'Next day'}/>
+		</>
 	)
 }
 

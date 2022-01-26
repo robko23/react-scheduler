@@ -1,30 +1,24 @@
-import { Typography } from "@mui/material"
 import {
 	addDays,
-	addMinutes,
 	differenceInDays,
 	eachMinuteOfInterval,
 	endOfDay,
-	format,
 	isAfter,
 	isBefore,
-	isSameDay,
-	isToday,
 	isWithinInterval,
 	setHours,
 	setMinutes,
 	startOfDay,
 } from "date-fns"
-import { Fragment, useCallback, useEffect } from "react"
-import { Cell } from "../components/common/Cell"
+import { useCallback, useEffect } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import { WithResources } from "../components/common/WithResources"
 import EventItem from "../components/events/EventItem"
-import TodayEvents from "../components/events/TodayEvents"
+import { RowWithTime } from "../components/week/RowWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { calcCellHeight, calcMinuteHeight, getResourcedEvents, } from "../helpers/generals"
+import { getResourcedEvents, } from "../helpers/generals"
 import { useAppState } from "../hooks/useAppState"
-import { TableGrid } from "../styles/styles"
+import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
 import { CellRenderedProps, DayHours, DefaultRecourse, ProcessedEvent, } from "../types"
 
 export interface DayProps {
@@ -40,18 +34,14 @@ const Day = () => {
 		day,
 		selectedDate,
 		events,
-		height,
-		triggerDialog,
 		remoteEvents,
 		triggerLoading,
 		handleState,
 		resources,
 		resourceFields,
 		fields,
-		direction,
-		locale,
 	} = useAppState()
-	const {startHour, endHour, step, cellRenderer} = day!
+	const {startHour, endHour, step} = day!
 	const START_TIME = setMinutes(setHours(selectedDate, startHour), 0)
 	const END_TIME = setMinutes(setHours(selectedDate, endHour), 0)
 	const hours = eachMinuteOfInterval(
@@ -61,10 +51,11 @@ const Day = () => {
 		},
 		{step: step}
 	)
-	const CELL_HEIGHT = calcCellHeight(height, hours.length)
-	const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step)
+
+
 	const todayEvents = events.sort((b, a) => a.end.getTime() - b.end.getTime())
 
+	//region Remote events
 	const fetchEvents = useCallback(async () => {
 		try {
 			triggerLoading(true)
@@ -89,6 +80,7 @@ const Day = () => {
 		}
 		// eslint-disable-next-line
 	}, [ fetchEvents ])
+	//endregion
 
 	const renderMultiDayEvents = (events: ProcessedEvent[]) => {
 		const multiDays = events.filter(
@@ -131,9 +123,9 @@ const Day = () => {
 	}
 
 	const renderTable = (resource?: DefaultRecourse) => {
-		let recousedEvents = todayEvents
+		let resourcedEvents = todayEvents
 		if ( resource ) {
-			recousedEvents = getResourcedEvents(
+			resourcedEvents = getResourcedEvents(
 				todayEvents,
 				resource,
 				resourceFields,
@@ -154,89 +146,87 @@ const Day = () => {
 		return (
 			<TableGrid days={1}>
 				{/* Header */}
-				<span className="rs__cell"></span>
-				<span
-					className={`rs__cell rs__header ${
-						isToday(selectedDate) ? "rs__today_cell" : ""
-					}`}
-					style={{height: headerHeight}}
-				>
-          <TodayTypo date={selectedDate}/>
-					{renderMultiDayEvents(recousedEvents)}
-        </span>
+				<GridCell/>
+				<GridHeaderCell
+					style={{height: headerHeight}}>
+					<TodayTypo date={selectedDate}/>
+					{renderMultiDayEvents(resourcedEvents)}
+				</GridHeaderCell>
 
-				{/* Body */}
-				{hours.map((h, i) => {
-					const start = new Date(
-						`${format(selectedDate, "yyyy MM dd")} ${format(h, "hh:mm a")}`
-					)
-					const end = new Date(
-						`${format(selectedDate, "yyyy MM dd")} ${format(
-							addMinutes(h, step),
-							"hh:mm a"
-						)}`
-					)
-					const field = resourceFields.idField
+				<RowWithTime daysList={[ selectedDate ]} step={step} resourcedEvents={resourcedEvents}
+							 startHour={startHour} hours={hours}/>
+				{/*/!* Body *!/*/}
+				{/*{hours.map((hour, hourIndex) => {*/}
+				{/*	const start = new Date(*/}
+				{/*		`${format(selectedDate, "yyyy MM dd")} ${format(hour, "hh:mm a")}`*/}
+				{/*	)*/}
+				{/*	const end = new Date(*/}
+				{/*		`${format(selectedDate, "yyyy MM dd")} ${format(*/}
+				{/*			addMinutes(hour, step),*/}
+				{/*			"hh:mm a"*/}
+				{/*		)}`*/}
+				{/*	)*/}
+				{/*	const field = resourceFields.idField*/}
 
-					return (
-						<Fragment key={i}>
-							{/* Time Cells */}
-							<span
-								className="rs__cell rs__header rs__time"
-								style={{height: CELL_HEIGHT}}
-							>
-                <Typography variant="caption">
-                  {format(h, "hh:mm a", {locale: locale})}
-                </Typography>
-              </span>
+				{/*	return (*/}
+				{/*		<Fragment key={hourIndex}>*/}
+				{/*			/!* Time Cells *!/*/}
+				{/*			<GridTimeCell>*/}
+				{/*				<Typography variant="caption">*/}
+				{/*					{format(hour, "hh:mm a", {locale: locale})}*/}
+				{/*				</Typography>*/}
+				{/*			</GridTimeCell>*/}
 
-							<span
-								className={`rs__cell ${
-									isToday(selectedDate) ? "rs__today_cell" : ""
-								}`}
-							>
-                {/* Events of this day - run once on the top hour column */}
-								{i === 0 && (
-									<TodayEvents
-										todayEvents={recousedEvents.filter(
-											(e) =>
-												!differenceInDays(e.end, e.start) &&
-												isSameDay(selectedDate, e.start)
-										)}
-										today={selectedDate}
-										minuteHeight={MINUTE_HEIGHT}
-										startHour={startHour}
-										step={step}
-										direction={direction}
-									/>
-								)}
-								{/* Cell */}
-								{cellRenderer ? (
-									cellRenderer({
-										day: selectedDate,
-										start,
-										end,
-										height: CELL_HEIGHT,
-										onClick: () =>
-											triggerDialog(true, {
-												start,
-												end,
-												[field]: resource ? resource[field] : null,
-											}),
-										[field]: resource ? resource[field] : null,
-									})
-								) : (
-									<Cell
-										start={start}
-										end={end}
-										resourceKey={field}
-										resourceVal={resource ? resource[field] : null}
-									/>
-								)}
-              </span>
-						</Fragment>
-					)
-				})}
+				{/*			<CellWithEvent*/}
+				{/*				hour={hour}*/}
+				{/*				step={step}*/}
+				{/*				hourIndex={hourIndex}*/}
+				{/*				day={}*/}
+				{/*				startHour={startHour}*/}
+				{/*				resourcedEvents={recousedEvents}*/}
+				{/*			/>*/}
+				{/*			/!*<GridCell>*!/*/}
+				{/*			/!*	/!* Events of this day - run once on the top hour column *!/*!/*/}
+				{/*			/!*	{i === 0 && (*!/*/}
+				{/*			/!*		<TodayEvents*!/*/}
+				{/*			/!*			todayEvents={recousedEvents.filter(*!/*/}
+				{/*			/!*				(e) =>*!/*/}
+				{/*			/!*					!differenceInDays(e.end, e.start) &&*!/*/}
+				{/*			/!*					isSameDay(selectedDate, e.start)*!/*/}
+				{/*			/!*			)}*!/*/}
+				{/*			/!*			today={selectedDate}*!/*/}
+				{/*			/!*			minuteHeight={MINUTE_HEIGHT}*!/*/}
+				{/*			/!*			startHour={startHour}*!/*/}
+				{/*			/!*			step={step}*!/*/}
+				{/*			/!*			direction={direction}*!/*/}
+				{/*			/!*		/>*!/*/}
+				{/*			/!*	)}*!/*/}
+				{/*			/!*	/!* Cell *!/*!/*/}
+				{/*			/!*	{cellRenderer ? (*!/*/}
+				{/*			/!*		cellRenderer({*!/*/}
+				{/*			/!*			day: selectedDate,*!/*/}
+				{/*			/!*			start,*!/*/}
+				{/*			/!*			end,*!/*/}
+				{/*			/!*			onClick: () =>*!/*/}
+				{/*			/!*				triggerDialog(true, {*!/*/}
+				{/*			/!*					start,*!/*/}
+				{/*			/!*					end,*!/*/}
+				{/*			/!*					[field]: resource ? resource[field] : null,*!/*/}
+				{/*			/!*				}),*!/*/}
+				{/*			/!*			[field]: resource ? resource[field] : null,*!/*/}
+				{/*			/!*		})*!/*/}
+				{/*			/!*	) : (*!/*/}
+				{/*			/!*		<Cell*!/*/}
+				{/*			/!*			start={start}*!/*/}
+				{/*			/!*			end={end}*!/*/}
+				{/*			/!*			resourceKey={field}*!/*/}
+				{/*			/!*			resourceVal={resource ? resource[field] : null}*!/*/}
+				{/*			/!*		/>*!/*/}
+				{/*			/!*	)}*!/*/}
+				{/*			/!*</GridCell>*!/*/}
+				{/*		</Fragment>*/}
+				{/*	)*/}
+				{/*})}*/}
 			</TableGrid>
 		)
 	}

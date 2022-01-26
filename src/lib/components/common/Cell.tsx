@@ -1,32 +1,34 @@
 import { alpha, Button, useTheme } from "@mui/material"
+import { ForwardedRef, forwardRef } from "react"
 import { useAppState } from "../../hooks/useAppState"
 
 interface CellProps {
 	start: Date;
 	end: Date;
-	resourceKey: string;
-	resourceVal: string | number;
+	resourceKey?: string;
+	resourceVal?: string | number;
 	children?: JSX.Element;
 }
 
-const Cell = ({
+const Cell = forwardRef(({
 	start,
 	end,
 	resourceKey,
 	resourceVal,
 	children,
-}: CellProps) => {
+}: CellProps, ref: ForwardedRef<HTMLButtonElement>) => {
 	const {triggerDialog, onDrop} = useAppState()
 	const theme = useTheme()
 
 	return (
 		<Button
+			ref={ref}
 			fullWidth
 			onClick={() => {
 				triggerDialog(true, {
 					start,
 					end,
-					[resourceKey]: resourceVal,
+					[resourceKey || ""]: resourceVal,
 				})
 			}}
 			onDragOver={(e) => {
@@ -54,6 +56,6 @@ const Cell = ({
 			{children}
 		</Button>
 	)
-}
+})
 
 export { Cell }
