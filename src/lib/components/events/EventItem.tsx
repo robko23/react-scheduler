@@ -11,6 +11,7 @@ import { Fragment, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { PopperInner } from "../../styles/styles"
 import { ProcessedEvent } from "../../types"
+import React from "react"
 
 interface EventItemProps {
 	event: ProcessedEvent;

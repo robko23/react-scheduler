@@ -1,5 +1,5 @@
 import { addMinutes, differenceInDays, format, isSameDay, isToday } from "date-fns"
-import { ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
+import React, { ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { GridCell } from "../../styles/styles"
 import { ProcessedEvent } from "../../types"

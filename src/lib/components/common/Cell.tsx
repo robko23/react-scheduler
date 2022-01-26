@@ -1,5 +1,5 @@
 import { alpha, Button, useTheme } from "@mui/material"
-import { ForwardedRef, forwardRef } from "react"
+import React, { ForwardedRef, forwardRef } from "react"
 import { useAppState } from "../../hooks/useAppState"
 
 interface CellProps {

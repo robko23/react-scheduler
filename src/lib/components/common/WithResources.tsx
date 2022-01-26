@@ -3,6 +3,7 @@ import { useAppState } from "../../hooks/useAppState"
 import { DefaultRecourse } from "../../types"
 import { ResourceHeader } from "./ResourceHeader"
 import { ButtonTabProps, ButtonTabs } from "./Tabs"
+import React from "react"
 
 interface WithResourcesProps {
 	renderChildren(resource: DefaultRecourse): ReactChild;

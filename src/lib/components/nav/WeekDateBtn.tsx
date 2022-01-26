@@ -6,6 +6,7 @@ import { useAppState } from "../../hooks/useAppState"
 import { WeekProps } from "../../views/Week"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
+import React from "react"
 
 interface WeekDateBtnProps {
 	selectedDate: Date;

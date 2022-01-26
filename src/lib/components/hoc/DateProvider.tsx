@@ -1,5 +1,6 @@
 import AdapterDateFns from "@mui/lab/AdapterDateFns"
 import LocalizationProvider from "@mui/lab/LocalizationProvider"
+import React from "react"
 import { useAppState } from "../../hooks/useAppState"
 
 interface AuxProps {

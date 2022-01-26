@@ -10,7 +10,7 @@ import {
 	setMinutes,
 	startOfDay,
 } from "date-fns"
-import { useCallback, useEffect } from "react"
+import React, { useCallback, useEffect } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import { WithResources } from "../components/common/WithResources"
 import EventItem from "../components/events/EventItem"

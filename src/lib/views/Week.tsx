@@ -14,6 +14,7 @@ import {
 	startOfDay,
 	startOfWeek,
 } from "date-fns"
+import React from "react"
 import { useCallback, useEffect } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import { WithResources } from "../components/common/WithResources"

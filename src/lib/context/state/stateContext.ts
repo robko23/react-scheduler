@@ -2,6 +2,7 @@ import enUS from "date-fns/locale/en-US"
 import { createContext } from "react"
 import { View } from "../../components/nav/Navigation"
 import { DefaultRecourse, EventActions, ProcessedEvent, SchedulerProps, } from "../../types"
+import React from "react"
 
 export type SelectedRange = { start: Date; end: Date };
 

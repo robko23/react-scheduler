@@ -5,6 +5,7 @@ import { useAppState } from "../../hooks/useAppState"
 import { DayDateBtn } from "./DayDateBtn"
 import { MonthDateBtn } from "./MonthDateBtn"
 import { WeekDateBtn } from "./WeekDateBtn"
+import React from "react"
 
 export type View = "month" | "week" | "day";
 

@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
+import React from "react"
 
 interface DayDateBtnProps {
 	selectedDate: Date;

@@ -6,6 +6,7 @@ import { Day } from "./views/Day"
 import Editor from "./views/Editor"
 import { Month } from "./views/Month"
 import { Week } from "./views/Week"
+import React from "react"
 
 const SchedulerComponent = () => {
 	const {loading, view, dialog, height} = useAppState()

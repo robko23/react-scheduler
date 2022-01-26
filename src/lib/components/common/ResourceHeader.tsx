@@ -2,6 +2,7 @@ import { Avatar, ListItem, ListItemAvatar, ListItemText, Typography, } from "@mu
 import { useAppState } from "../../hooks/useAppState"
 import { useWindowResize } from "../../hooks/useWindowResize"
 import { DefaultRecourse } from "../../types"
+import React from "react"
 
 interface ResourceHeaderProps {
 	resource: DefaultRecourse;

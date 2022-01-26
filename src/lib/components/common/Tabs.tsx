@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles"
 import { Theme } from "@mui/system"
 import PropTypes from "prop-types"
 import { CSSProperties, ReactChild } from "react"
+import React from "react"
 
 interface TabPanelProps {
 	value: string | number;

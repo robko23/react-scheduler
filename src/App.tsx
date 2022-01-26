@@ -1,5 +1,6 @@
 // import arSA from "date-fns/locale/ar-SA";
 import { cs } from 'date-fns/locale'
+import React from "react"
 import { Scheduler } from "./lib/Scheduler"
 import { EVENTS } from "./model/events"
 

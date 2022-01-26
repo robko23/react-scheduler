@@ -4,6 +4,7 @@ import { Fragment } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { GridTimeCell } from "../../styles/styles"
 import { Row, RowProps } from "./Row"
+import React from "react"
 
 type Props = Omit<RowProps & {
 	hours: Date[],

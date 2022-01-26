@@ -4,6 +4,7 @@ import { arraytizeFieldVal, getAvailableViews, getOneView, } from "../../helpers
 import { EventActions, ProcessedEvent, SchedulerProps } from "../../types"
 import { defaultProps, SchedulerState, SelectedRange, StateContext, } from "./stateContext"
 import { stateReducer } from "./stateReducer"
+import React from "react"
 
 interface AppProps {
 	children: ReactChild;

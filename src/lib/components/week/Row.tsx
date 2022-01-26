@@ -1,6 +1,7 @@
 import { ProcessedEvent } from "../../types"
 import { CellWithEvent } from "./CellWithEvent"
 import { WeekCellProps } from "./EmptyCell"
+import React from "react"
 
 export type RowProps = Omit<WeekCellProps & {
 	hourIndex: number,

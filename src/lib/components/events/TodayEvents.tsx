@@ -4,6 +4,7 @@ import { Fragment } from "react"
 import { BORDER_HEIGHT } from "../../helpers/constants"
 import { traversCrossingEvents } from "../../helpers/generals"
 import { ProcessedEvent } from "../../types"
+import React from "react"
 import EventItem from "./EventItem"
 
 interface TodayEventsProps {
