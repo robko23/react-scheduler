@@ -11,17 +11,17 @@ const App = () => {
 		<Scheduler
 			// dialogMaxWidth="sm"
 			// loading
-			view="month"
+			view="week"
 			events={EVENTS}
 			locale={cs}
 			selectedDate={new Date()}
 			height={'100%'}
 			week={{
-				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6],
 				weekStartOn: 1,
-				startHour: 0,
-				endHour: 23,
-				step: 60,
+				startHour: 8,
+				endHour: 15,
+				step: 30,
 				// cellRenderer: () => {
 				//   return <>week</>;
 				// },

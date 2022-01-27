@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef } from "react"
+import { ForwardedRef, forwardRef, memo } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { CellRenderedProps } from "../../types"
 import { Cell } from "../common/Cell"
@@ -11,7 +11,7 @@ export type WeekCellProps = {
 	end: Date
 }
 
-export const EmptyCell = forwardRef((props: WeekCellProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const EmptyCell = memo(forwardRef((props: WeekCellProps, ref: ForwardedRef<HTMLButtonElement>) => {
 	const {triggerDialog} = useAppState()
 	if ( props.cellRenderer ) {
 		return props.cellRenderer({
@@ -32,4 +32,4 @@ export const EmptyCell = forwardRef((props: WeekCellProps, ref: ForwardedRef<HTM
 		end={props.end}
 		ref={ref}
 	/>
-})
+}))

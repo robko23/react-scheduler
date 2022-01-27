@@ -1,5 +1,5 @@
 import { addMinutes, differenceInDays, format, isSameDay, isToday } from "date-fns"
-import React, { ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
+import React, { memo, ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { GridCell } from "../../styles/styles"
 import { ProcessedEvent } from "../../types"
@@ -15,10 +15,10 @@ type Props = {
 	resourcedEvents: ProcessedEvent[]
 }
 
-export const CellWithEvent = (props: Props): ReactElement => {
+export const CellWithEvent = memo((props: Props): ReactElement => {
 	const {direction, locale, view} = useAppState()
 	const ref = useRef<HTMLButtonElement | null>(null)
-	const [ minuteHeight, setMinuteHeight ] = useState(0)
+	const [ minuteHeight, setMinuteHeight ] = useState<number | null>(null)
 
 	const todayEvents = useMemo(() => props.resourcedEvents
 		.filter(
@@ -50,7 +50,7 @@ export const CellWithEvent = (props: Props): ReactElement => {
 		<GridCell today={isToday((props.day)) && view === 'week'}>
 
 			{/* Events of each day - run once on the top hour column */}
-			{props.hourIndex === 0 &&
+			{props.hourIndex === 0 && minuteHeight &&
             <TodayEvents
                 todayEvents={todayEvents}
                 today={props.day}
@@ -69,4 +69,4 @@ export const CellWithEvent = (props: Props): ReactElement => {
 			/>
 		</GridCell>
 	)
-}
+})

@@ -1,6 +1,7 @@
 import { Paper } from "@mui/material"
 import {
 	addDays,
+	clamp,
 	differenceInDays,
 	eachMinuteOfInterval,
 	endOfDay,
@@ -14,17 +15,14 @@ import {
 	startOfDay,
 	startOfWeek,
 } from "date-fns"
-import React from "react"
-import { useCallback, useEffect } from "react"
+import React, { useCallback } from "react"
 import TodayTypo from "../components/common/TodayTypo"
-import { WithResources } from "../components/common/WithResources"
 import EventItem from "../components/events/EventItem"
 import { RowWithTime } from "../components/week/RowWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { getResourcedEvents, } from "../helpers/generals"
 import { useAppState } from "../hooks/useAppState"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
-import { CellRenderedProps, DayHours, DefaultRecourse, ProcessedEvent, } from "../types"
+import { CellRenderedProps, DayHours, ProcessedEvent, } from "../types"
 import { WeekDays } from "./Month"
 
 export interface WeekProps {
@@ -37,27 +35,32 @@ export interface WeekProps {
 	cellRenderer?(props: CellRenderedProps): JSX.Element;
 }
 
-const Week = () => {
+// size of one multiday event
+const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT
+
+const Week = React.memo(() => {
 	const {
 		week,
 		selectedDate,
 		events,
 		handleGotoDay,
-		remoteEvents,
-		triggerLoading,
-		handleState,
-		resources,
-		resourceFields,
-		fields,
 	} = useAppState()
 
 	const {weekStartOn, weekDays, startHour, endHour, step, cellRenderer} = week!
-	const _weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
-	const daysList = weekDays.map((d) => addDays(_weekStart, d))
-	const weekStart = startOfDay(daysList[0])
-	const weekEnd = endOfDay(daysList[daysList.length - 1])
+
+	//actual start of week
+	const weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
+	// visible days
+	const daysList = weekDays.map((d) => addDays(weekStart, d))
+	// visible first day
+	const visibleWeekStart = startOfDay(daysList[0])
+	// visible last day
+	const visibleWeekEnd = endOfDay(daysList[daysList.length - 1])
+	// configured start hour
 	const START_TIME = setMinutes(setHours(selectedDate, startHour), 0)
+	// configured end hour
 	const END_TIME = setMinutes(setHours(selectedDate, endHour), 0)
+	// calculated intervals
 	const hours = eachMinuteOfInterval(
 		{
 			start: START_TIME,
@@ -65,74 +68,25 @@ const Week = () => {
 		},
 		{step: step}
 	)
-	// const CELL_HEIGHT = calcCellHeight(height, hours.length)
-	// const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step)
-	const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT
 
-	//region Remote events
-	const fetchEvents = useCallback(async () => {
-		try {
-			triggerLoading(true)
-			const query = `?start=${weekStart}&end=${weekEnd}`
-			const events = await remoteEvents!(query)
-			if ( Array.isArray(events) ) {
-				handleState(events, "events")
-			}
-		} catch ( error ) {
-			throw error
-		} finally {
-			triggerLoading(false)
-		}
-		// eslint-disable-next-line
-	}, [ selectedDate ])
 
-	useEffect(() => {
-		if ( remoteEvents instanceof Function ) {
-			fetchEvents()
-		}
-		// eslint-disable-next-line
-	}, [ fetchEvents ])
-	//endregion
-
-	const renderMultiDayEvents = (events: ProcessedEvent[], today: Date) => {
-		const isFirstDayInWeek = isSameDay(weekStart, today)
-		const allWeekMulti = events.filter(
-			(e) =>
-				differenceInDays(e.end, e.start) > 0 &&
-				daysList.some((weekday) =>
-					isWithinInterval(weekday, {
-						start: startOfDay(e.start),
-						end: endOfDay(e.end),
-					})
-				)
-		)
-
-		const multiDays = allWeekMulti
-			.filter((e) =>
-				isBefore(e.start, weekStart)
-					? isFirstDayInWeek
-					: isSameDay(e.start, today)
-			)
-			.sort((a, b) => b.end.getTime() - a.end.getTime())
-		return multiDays.map((event, i) => {
-			const hasPrev = isBefore(startOfDay(event.start), weekStart)
-			const hasNext = isAfter(endOfDay(event.end), weekEnd)
+	// renders all events in current week in first visible day
+	const renderMultiDayEvents = useCallback((events: ProcessedEvent[]) => {
+		return events.map((event, index) => {
+			// if event is longer than visible range
+			const hasPrev = isBefore(startOfDay(event.start), visibleWeekStart)
+			const hasNext = isAfter(endOfDay(event.end), visibleWeekEnd)
 			const eventLength =
 				differenceInDays(
-					hasNext ? weekEnd : event.end,
-					hasPrev ? weekStart : event.start
+					hasNext ? visibleWeekEnd : event.end,
+					hasPrev ? visibleWeekStart : event.start
 				) + 1
-			const prevNextEvents = events.filter((e) =>
-				isFirstDayInWeek
-					? false
-					: e.event_id !== event.event_id && //Exclude it's self
-					isWithinInterval(today, {start: e.start, end: e.end})
-			)
 
-			let index = i
-			if ( prevNextEvents.length ) {
-				index += prevNextEvents.length
-			}
+			// calculate difference from week start and event start
+			const eventStartOffset = differenceInDays(
+				clamp(event.start, {start: visibleWeekStart, end: visibleWeekEnd}),
+				visibleWeekStart
+			)
 
 			return (
 				<Paper
@@ -142,6 +96,7 @@ const Week = () => {
 					sx={{
 						top: index * MULTI_SPACE + 45,
 						width: `${100 * eventLength}%`,
+						left: `${100 * eventStartOffset}%`
 					}}
 				>
 					<EventItem
@@ -153,19 +108,10 @@ const Week = () => {
 				</Paper>
 			)
 		})
-	}
+	}, [visibleWeekEnd, visibleWeekStart])
 
-	const renderTable = (resource?: DefaultRecourse) => {
-		let resourcedEvents = events
-		if ( resource ) {
-			resourcedEvents = getResourcedEvents(
-				events,
-				resource,
-				resourceFields,
-				fields
-			)
-		}
-
+	const renderTable = useCallback(() => {
+		// all events in current week
 		const allWeekMulti = events.filter(
 			(e) =>
 				differenceInDays(e.end, e.start) > 0 &&
@@ -186,13 +132,13 @@ const Week = () => {
 				<GridCell/>
 
 				{/* Header days */}
-				{daysList.map((date, i) => (
+				{daysList.map((date) => (
 					<GridHeaderCell
 						today={isToday(date)}
-						key={i}
+						key={date.toISOString()}
 						sx={{height: headerHeight}}>
 						<TodayTypo date={date} onClick={handleGotoDay}/>
-						{renderMultiDayEvents(resourcedEvents, date)}
+						{isSameDay(visibleWeekStart, date) && renderMultiDayEvents(allWeekMulti)}
 					</GridHeaderCell>
 				))}
 
@@ -200,17 +146,16 @@ const Week = () => {
 				<RowWithTime
 					daysList={daysList}
 					hours={hours}
-					resourcedEvents={resourcedEvents}
+					resourcedEvents={events}
 					startHour={startHour}
 					step={step}
 					cellRenderer={cellRenderer}
 				/>
 			</TableGrid>
 		)
-	}
+	}, [cellRenderer, daysList, events, handleGotoDay, hours, renderMultiDayEvents, startHour, step, visibleWeekStart])
 
-	return resources.length ? (
-		<WithResources renderChildren={renderTable}/>) : (renderTable())
-}
+	return renderTable()
+})
 
 export { Week }

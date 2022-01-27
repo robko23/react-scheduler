@@ -6,7 +6,7 @@ export const TableGrid = styled(Box)<{ days: number; indent?: string }>(
 		position: "relative",
 		display: "grid",
 		height: '100%',
-		gridTemplateRows: '0.5fr',
+		gridTemplateRows: '0.3fr',
 		gridAutoRows: '1fr',
 		gridTemplateColumns:
 			+indent > 0 ? `10% repeat(${days}, 1fr)` : `repeat(${days}, 1fr)`,
@@ -67,9 +67,9 @@ export const GridHeaderCell = styled(GridCell, {
 })<{ today?: boolean }>(({theme, today = false}) => ({
 	padding: "2px 5px",
 	...(!today && {
-		background: alpha(theme.palette.primary.light, 0.6),
+		background: alpha(theme.palette.secondary.light, 0.6),
 		'& .MuiTypography-root': {
-			color: theme.palette.getContrastText(alpha(theme.palette.primary.light, 0.6))
+			color: theme.palette.getContrastText(alpha(theme.palette.secondary.light, 0.6))
 		}
 	}),
 	...(today && {
