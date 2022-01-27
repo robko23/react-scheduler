@@ -1,110 +1,109 @@
 import { Typography } from "@mui/material"
-import React from "react"
 import {
-	closestTo,
+	clamp,
+	compareDesc,
 	differenceInDays,
-	endOfDay,
+	getDate,
 	isAfter,
 	isBefore,
 	isSameDay,
 	isWithinInterval,
-	startOfDay,
-	startOfWeek,
+	set,
 } from "date-fns"
-import { Fragment } from "react"
-import { MONTH_NUMBER_HEIGHT, MULTI_DAY_EVENT_HEIGHT, } from "../../helpers/constants"
+import React, { Fragment, useEffect } from "react"
+import { END_OF_THE_DAY, MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT, START_OF_THE_DAY, } from "../../helpers/constants"
 import { ProcessedEvent } from "../../types"
 import EventItem from "./EventItem"
 
 interface MonthEventProps {
 	events: ProcessedEvent[];
 	today: Date;
-	eachWeekStart: Date[];
 	daysList: Date[];
+	weekStart: Date,
+	weekEnd: Date,
 
 	onViewMore(day: Date): void;
 
-	cellHeight: number;
+	cellSize: number
 }
+
+const EMPTY_SLOT: ProcessedEvent = {
+	end: new Date(),
+	event_id: 'null',
+	start: new Date(),
+	title: ''
+}
+
+let slots: ProcessedEvent[] = []
 
 const MonthEvents = ({
 	events,
 	today,
-	eachWeekStart,
-	daysList,
 	onViewMore,
-	cellHeight,
+	weekEnd,
+	weekStart,
+	cellSize
 }: MonthEventProps) => {
-	const LIMIT = Math.round(
-		(cellHeight - MONTH_NUMBER_HEIGHT) / MULTI_DAY_EVENT_HEIGHT - 1
+
+	const MAX_EVENTS = Math.round(
+		(cellSize - MONTH_NUMBER_SIZE) / MULTI_DAY_EVENT_HEIGHT - 1
 	)
-	const eachFirstDayInCalcRow = eachWeekStart.some((date) =>
-		isSameDay(date, today)
-	)
-		? today
-		: null
+
+	if(slots.length !== MAX_EVENTS || isSameDay(today, weekStart)) {
+		slots = new Array<ProcessedEvent>(MAX_EVENTS).fill(EMPTY_SLOT)
+	}
 
 	const todayEvents = events
 		.filter((e) =>
-			eachFirstDayInCalcRow &&
-			isWithinInterval(eachFirstDayInCalcRow, {
-				start: startOfDay(e.start),
-				end: endOfDay(e.end),
+			isWithinInterval(today, {
+				start: set(e.start, START_OF_THE_DAY),
+				end: set(e.end, END_OF_THE_DAY)
 			})
-				? true
-				: isSameDay(e.start, today)
 		)
-		.sort((a, b) => b.end.getTime() - a.end.getTime())
+		.sort((a, b) => compareDesc(a.end, b.end))
 
 	return (
 		<Fragment>
 			{todayEvents.map((event, i) => {
-				const fromPrevWeek =
-					!!eachFirstDayInCalcRow &&
-					isBefore(event.start, eachFirstDayInCalcRow)
-				const start =
-					fromPrevWeek && eachFirstDayInCalcRow
-						? eachFirstDayInCalcRow
-						: event.start
 
+				const fromPrevWeek = isBefore(event.start, weekStart)
+				const start = fromPrevWeek ? weekStart : event.start
 				let eventLength = differenceInDays(event.end, start) + 1
-				const toNextWeek = eventLength >= daysList.length
+
+				const toNextWeek = isAfter(event.end, weekEnd)
 				if ( toNextWeek ) {
-					// Rethink it
-					const NotAccurateWeekStart = startOfWeek(event.start)
-					const closestStart = closestTo(NotAccurateWeekStart, eachWeekStart)
-					if ( closestStart ) {
-						eventLength =
-							daysList.length -
-							(!eachFirstDayInCalcRow
-								? differenceInDays(event.start, closestStart)
-								: 0)
+					eventLength = differenceInDays(weekEnd, clamp(event.start, {start: weekStart, end: weekEnd})) + 1
+				}
+
+				const startsToday = isSameDay(start, today)
+				let index = i
+				let noSlotFree = false
+
+				slots = slots.map(slot => {
+					// if event ended, clear the slot
+					if(isBefore(slot.end, today))
+						return EMPTY_SLOT
+					return slot
+				})
+
+				// take a look at first free slot
+				// if no free slot is found, place text "n more..." after last slot
+				if(startsToday) {
+					const firstFree = slots.findIndex(e => e.event_id === EMPTY_SLOT.event_id)
+					if(firstFree !== -1) {
+						index = firstFree
+						slots[firstFree] = event
+
+					} else {
+						noSlotFree = true
+						index = MAX_EVENTS
 					}
 				}
 
-				const prevNextEvents = events.filter((e) => {
-					return (
-						!eachFirstDayInCalcRow &&
-						e.event_id !== event.event_id &&
-						LIMIT > i &&
-						isBefore(e.start, startOfDay(today)) &&
-						isAfter(e.end, startOfDay(today))
-					)
-				})
-				let index = i
+				const topSpace = index * MULTI_DAY_EVENT_HEIGHT + MONTH_NUMBER_SIZE + 2
 
-				if ( prevNextEvents.length ) {
-					index += prevNextEvents.length
-					// if (index > LIMIT) {
-					//   index = LIMIT;
-					// }
-				}
-				const topSpace = index * MULTI_DAY_EVENT_HEIGHT + MONTH_NUMBER_HEIGHT
-
-				return index > LIMIT ? (
-					""
-				) : index === LIMIT ? (
-					<Typography
+				if(noSlotFree && startsToday)
+					return <Typography
 						key={i}
 						width="100%"
 						className="rs__multi_day rs__hover__op"
@@ -114,26 +113,32 @@ const MonthEvents = ({
 							onViewMore(event.start)
 						}}
 					>
-						{`${Math.abs(todayEvents.length - i)} More...`}
+						{`${Math.abs(todayEvents.length - MAX_EVENTS)} More...`}
 					</Typography>
-				) : (
-					<div
-						key={i}
-						className="rs__multi_day"
-						style={{
-							top: topSpace,
-							width: `${100 * eventLength}%`,
-						}}
-					>
-						<EventItem
-							event={event}
-							showdate={false}
-							multiday={differenceInDays(event.end, event.start) > 0}
-							hasPrev={fromPrevWeek}
-							hasNext={toNextWeek}
-						/>
-					</div>
-				)
+
+				if ( startsToday ) {
+					return (
+						<div
+							key={event.title}
+							className="rs__multi_day"
+							style={{
+								top: topSpace,
+								width: `${100 * eventLength}%`,
+							}}
+						>
+							<EventItem
+								event={event}
+								showdate={false}
+								multiday={differenceInDays(event.end, event.start) > 0}
+								hasPrev={fromPrevWeek}
+								hasNext={toNextWeek}
+							/>
+						</div>
+					)
+				} else {
+					return <></>
+				}
+
 			})}
 		</Fragment>
 	)

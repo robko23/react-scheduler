@@ -46,7 +46,7 @@ export const EVENTS = [
 		event_id: 10,
 		title: "Multi-week",
 		start: new Date("2022 1 20 09:00"),
-		end: new Date("2022 1 31 09:20"),
+		end: new Date("2022 2 1 09:20"),
 	},
 	{
 		event_id: 11,
@@ -56,7 +56,7 @@ export const EVENTS = [
 	},
 	{
 		event_id: 12,
-		title: "Testing start",
+		title: "2 day event",
 		start: new Date("2022 1 24 09:00"),
 		end: new Date("2022 1 25 09:20"),
 	},

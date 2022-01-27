@@ -11,7 +11,7 @@ const App = () => {
 		<Scheduler
 			// dialogMaxWidth="sm"
 			// loading
-			view="week"
+			view="month"
 			events={EVENTS}
 			locale={cs}
 			selectedDate={new Date()}
@@ -27,7 +27,7 @@ const App = () => {
 				// },
 			}}
 			month={{
-				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+				weekDays: [0, 1, 2, 3, 4, 5 ],
 				weekStartOn: 1,
 				startHour: 7,
 				endHour: 15,
