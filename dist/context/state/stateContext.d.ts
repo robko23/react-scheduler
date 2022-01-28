@@ -1,6 +1,6 @@
+/// <reference types="react" />
 import { View } from "../../components/nav/Navigation";
-import { DefaultRecourse, EventActions, ProcessedEvent, SchedulerProps } from "../../types";
-import React from "react";
+import { EventActions, ProcessedEvent, SchedulerProps } from "../../types";
 export declare type SelectedRange = {
     start: Date;
     end: Date;
@@ -10,7 +10,6 @@ export interface SchedulerState extends SchedulerProps {
     dialog: boolean;
     selectedRange?: SelectedRange;
     selectedEvent?: ProcessedEvent;
-    selectedResource?: DefaultRecourse["assignee"];
 }
 export interface stateContext extends SchedulerState {
     handleState(value: SchedulerState[keyof SchedulerState], name: keyof SchedulerState): void;
@@ -19,8 +18,8 @@ export interface stateContext extends SchedulerState {
     triggerLoading(status: boolean): void;
     handleGotoDay(day: Date | string): void;
     confirmEvent(event: ProcessedEvent, action: EventActions): void;
-    onDrop(eventId: string, droppedStartTime: Date, resourceKey?: string, resourceVal?: string | number): void;
+    onDrop(eventId: string, droppedStartTime: Date): void;
 }
 export declare const defaultProps: SchedulerProps;
-declare const StateContext: React.Context<stateContext>;
+declare const StateContext: import("react").Context<stateContext>;
 export { StateContext };

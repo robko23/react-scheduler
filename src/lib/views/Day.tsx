@@ -1,5 +1,4 @@
 import {
-	addDays,
 	differenceInDays,
 	eachMinuteOfInterval,
 	endOfDay,
@@ -10,16 +9,14 @@ import {
 	setMinutes,
 	startOfDay,
 } from "date-fns"
-import React, { useCallback, useEffect } from "react"
+import React from "react"
 import TodayTypo from "../components/common/TodayTypo"
-import { WithResources } from "../components/common/WithResources"
 import EventItem from "../components/events/EventItem"
 import { RowWithTime } from "../components/week/RowWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { getResourcedEvents, } from "../helpers/generals"
 import { useAppState } from "../hooks/useAppState"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
-import { CellRenderedProps, DayHours, DefaultRecourse, ProcessedEvent, } from "../types"
+import { CellRenderedProps, DayHours, ProcessedEvent, } from "../types"
 
 export interface DayProps {
 	startHour: DayHours;
@@ -34,12 +31,6 @@ const Day = () => {
 		day,
 		selectedDate,
 		events,
-		remoteEvents,
-		triggerLoading,
-		handleState,
-		resources,
-		resourceFields,
-		fields,
 	} = useAppState()
 	const {startHour, endHour, step} = day!
 	const START_TIME = setMinutes(setHours(selectedDate, startHour), 0)
@@ -54,33 +45,6 @@ const Day = () => {
 
 
 	const todayEvents = events.sort((b, a) => a.end.getTime() - b.end.getTime())
-
-	//region Remote events
-	const fetchEvents = useCallback(async () => {
-		try {
-			triggerLoading(true)
-			const start = addDays(START_TIME, -1)
-			const end = addDays(END_TIME, 1)
-			const query = `?start=${start}&end=${end}`
-			const events = await remoteEvents!(query)
-			if ( events && events?.length ) {
-				handleState(events, "events")
-			}
-		} catch ( error ) {
-			throw error
-		} finally {
-			triggerLoading(false)
-		}
-		// eslint-disable-next-line
-	}, [ selectedDate ])
-
-	useEffect(() => {
-		if ( remoteEvents instanceof Function ) {
-			fetchEvents()
-		}
-		// eslint-disable-next-line
-	}, [ fetchEvents ])
-	//endregion
 
 	const renderMultiDayEvents = (events: ProcessedEvent[]) => {
 		const multiDays = events.filter(
@@ -122,16 +86,9 @@ const Day = () => {
 		)
 	}
 
-	const renderTable = (resource?: DefaultRecourse) => {
+	const renderTable = () => {
+		// fixme
 		let resourcedEvents = todayEvents
-		if ( resource ) {
-			resourcedEvents = getResourcedEvents(
-				todayEvents,
-				resource,
-				resourceFields,
-				fields
-			)
-		}
 
 		const allWeekMulti = events.filter(
 			(e) =>
@@ -231,11 +188,8 @@ const Day = () => {
 		)
 	}
 
-	return resources.length ? (
-		<WithResources span={2} renderChildren={renderTable}/>
-	) : (
-		renderTable()
-	)
+	return renderTable()
+
 }
 
 export { Day }

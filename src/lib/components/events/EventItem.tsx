@@ -37,8 +37,6 @@ const EventItem = ({
 		viewerExtraComponent,
 		fields,
 		direction,
-		resources,
-		resourceFields,
 		locale,
 		viewerTitleComponent,
 	} = useAppState()
@@ -135,12 +133,6 @@ const EventItem = ({
 	}
 
 	const renderViewer = () => {
-		const idKey = resourceFields.idField
-		const hasResource = resources.filter((res) =>
-			Array.isArray(event[idKey])
-				? event[idKey].includes(res[idKey])
-				: res[idKey] === event[idKey]
-		)
 
 		return (
 			<PopperInner>
@@ -229,19 +221,6 @@ const EventItem = ({
 							locale: locale,
 						})}`}
 					</Typography>
-					{hasResource.length > 0 && (
-						<Typography
-							style={{display: "flex", alignItems: "center"}}
-							color="textSecondary"
-							variant="caption"
-							noWrap
-						>
-							<SupervisorAccountRoundedIcon/>{" "}
-							{hasResource
-								.map((res) => res[resourceFields.textField])
-								.join(", ")}
-						</Typography>
-					)}
 					{viewerExtraComponent instanceof Function
 						? viewerExtraComponent(fields, event)
 						: viewerExtraComponent}

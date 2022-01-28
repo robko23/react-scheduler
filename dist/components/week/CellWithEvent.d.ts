@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { ProcessedEvent } from "../../types";
 declare type Props = {
     hour: Date;
@@ -8,5 +8,5 @@ declare type Props = {
     startHour: number;
     resourcedEvents: ProcessedEvent[];
 };
-export declare const CellWithEvent: (props: Props) => ReactElement;
+export declare const CellWithEvent: React.MemoExoticComponent<(props: Props) => ReactElement>;
 export {};

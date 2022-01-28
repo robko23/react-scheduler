@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from "react";
 import { CellRenderedProps, DayHours } from "../types";
 import { WeekDays } from "./Month";
 export interface WeekProps {
@@ -9,5 +9,5 @@ export interface WeekProps {
     step: number;
     cellRenderer?(props: CellRenderedProps): JSX.Element;
 }
-declare const Week: () => JSX.Element;
+declare const Week: React.MemoExoticComponent<() => JSX.Element>;
 export { Week };

@@ -27,8 +27,6 @@ const initialState = (initial: Partial<SchedulerProps>): SchedulerState => {
 const AppState = ({initial, children}: AppProps) => {
 	const {
 		events,
-		resources,
-		resourceViewMode,
 		month,
 		week,
 		day,
@@ -54,8 +52,6 @@ const AppState = ({initial, children}: AppProps) => {
 		if ( state.mounted ) {
 			updateProps({
 				events,
-				resources,
-				resourceViewMode,
 				month,
 				week,
 				day,
@@ -70,8 +66,6 @@ const AppState = ({initial, children}: AppProps) => {
 		//eslint-disable-next-line
 	}, [
 		events,
-		resources,
-		resourceViewMode,
 		month,
 		week,
 		day,
@@ -121,9 +115,7 @@ const AppState = ({initial, children}: AppProps) => {
 	}
 	const onDrop = async (
 		eventId: string,
-		startTime: Date,
-		resKey: string,
-		resVal: string | number
+		startTime: Date
 	) => {
 		// Get dropped event
 		const droppedEvent = state.events.find((e) => {
@@ -133,41 +125,9 @@ const AppState = ({initial, children}: AppProps) => {
 			return e.event_id === eventId
 		}) as ProcessedEvent
 
-		// Check if has resource and if is multiple
-		const resField = state.fields.find((f) => f.name === resKey)
-		const isMultiple = !!resField?.config?.multiple
-		let newResource = resVal as string | number | string[] | number[]
-		if ( resField ) {
-			const eResource = droppedEvent[resKey]
-			const currentRes = arraytizeFieldVal(
-				resField,
-				eResource,
-				droppedEvent
-			).value
-			if ( isMultiple ) {
-				// if dropped on already owned resource
-				if ( currentRes.includes(resVal) ) {
-					// Omit if dropped on same time slot for multiple event
-					if ( isEqual(droppedEvent.start, startTime) ) {
-						return
-					}
-					newResource = currentRes
-				} else {
-					// if have multiple resource ? add other : move to other
-					newResource =
-						currentRes.length > 1 ? [ ...currentRes, resVal ] : [ resVal ]
-				}
-			}
-		}
-
 		// Omit if dropped on same time slot for non multiple events
 		if ( isEqual(droppedEvent.start, startTime) ) {
-			if (
-				!newResource ||
-				(!isMultiple && newResource === droppedEvent[resKey])
-			) {
-				return
-			}
+			return
 		}
 
 		// Update event time according to original duration & update resources/owners
@@ -176,7 +136,6 @@ const AppState = ({initial, children}: AppProps) => {
 			...droppedEvent,
 			start: startTime,
 			end: addMinutes(startTime, diff),
-			[resKey]: newResource || "",
 		}
 
 		// Local

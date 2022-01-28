@@ -1,8 +1,7 @@
 import enUS from "date-fns/locale/en-US"
 import { createContext } from "react"
 import { View } from "../../components/nav/Navigation"
-import { DefaultRecourse, EventActions, ProcessedEvent, SchedulerProps, } from "../../types"
-import React from "react"
+import { EventActions, ProcessedEvent, SchedulerProps, } from "../../types"
 
 export type SelectedRange = { start: Date; end: Date };
 
@@ -11,7 +10,6 @@ export interface SchedulerState extends SchedulerProps {
 	dialog: boolean;
 	selectedRange?: SelectedRange;
 	selectedEvent?: ProcessedEvent;
-	selectedResource?: DefaultRecourse["assignee"];
 }
 
 export interface stateContext extends SchedulerState {
@@ -33,8 +31,6 @@ export interface stateContext extends SchedulerState {
 	onDrop(
 		eventId: string,
 		droppedStartTime: Date,
-		resourceKey?: string,
-		resourceVal?: string | number
 	): void;
 }
 
@@ -76,8 +72,6 @@ export const defaultProps = {
 		avatarField: "avatar",
 		colorField: "color",
 	},
-	recourseHeaderComponent: undefined,
-	resourceViewMode: "default",
 	direction: "ltr",
 	dialogMaxWidth: "md",
 	locale: enUS,
@@ -89,7 +83,6 @@ const StateContext = createContext<stateContext>({
 	dialog: false,
 	selectedRange: undefined,
 	selectedEvent: undefined,
-	selectedResource: undefined,
 	handleState: () => {
 	},
 	getViews: () => [],

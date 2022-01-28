@@ -79,20 +79,6 @@ export interface FieldProps {
 }
 export declare type ProcessedEvent = CalendarEvent & Record<string, any>;
 export declare type EventActions = "create" | "edit";
-export declare type DefaultRecourse = {
-    assignee?: string | number;
-    text?: string;
-    subtext?: string;
-    avatar?: string;
-    color?: string;
-} & Record<string, any>;
-export declare type ResourceFields = {
-    idField: string;
-    textField: string;
-    subTextField?: string;
-    avatarField?: string;
-    colorField?: string;
-} & Record<string, string>;
 export interface SchedulerHelpers {
     state: Record<string, StateItem>;
     close(): void;
@@ -133,16 +119,6 @@ export interface SchedulerProps {
     viewerExtraComponent?: JSX.Element | ((fields: FieldProps[], event: ProcessedEvent) => JSX.Element);
     /**Override viewer title component */
     viewerTitleComponent?(event: ProcessedEvent): JSX.Element;
-    /**Resources array to split event views with resources */
-    resources: DefaultRecourse[];
-    /**Map resources fields */
-    resourceFields: ResourceFields;
-    /**Override header component of resource */
-    recourseHeaderComponent?(resource: DefaultRecourse): JSX.Element;
-    /**Resource header view mode
-     * @default "default"
-     */
-    resourceViewMode: "default" | "tabs";
     /**Direction of table */
     direction: "rtl" | "ltr";
     /**Edito dialog maxWith

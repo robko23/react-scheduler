@@ -1,6 +1,6 @@
 import { addMinutes, isWithinInterval } from "date-fns"
 import { View } from "../components/nav/Navigation"
-import { DefaultRecourse, FieldProps, ProcessedEvent, ResourceFields, SchedulerProps, } from "../types"
+import { FieldProps, ProcessedEvent, SchedulerProps, } from "../types"
 import { StateEvent } from "../views/Editor"
 
 export const getOneView = (state: Partial<SchedulerProps>): View => {
@@ -39,36 +39,6 @@ export const arraytizeFieldVal = (
 	const value = arrytize ? (val ? [ val ] : []) : val
 	const validity = arrytize ? value.length : value
 	return {value, validity}
-}
-export const getResourcedEvents = (
-	events: ProcessedEvent[],
-	resource: DefaultRecourse,
-	resourceFields: ResourceFields,
-	fields: FieldProps[]
-): ProcessedEvent[] => {
-	const keyName = resourceFields.idField
-	const resourceField = fields.find((f) => f.name === keyName)
-	const isMultiple = !!resourceField?.config?.multiple
-
-	let recousedEvents = []
-
-	for ( const event of events ) {
-		// Handle single select & multiple select accordingly
-		const arrytize = isMultiple && !Array.isArray(event[keyName])
-		const eventVal = arrytize ? [ event[keyName] ] : event[keyName]
-		const isThisResource = isMultiple
-			? eventVal.includes(resource[keyName])
-			: eventVal === resource[keyName]
-
-		if ( isThisResource ) {
-			recousedEvents.push({
-				...event,
-				color: event.color || resource[resourceFields.colorField || ""],
-			})
-		}
-	}
-
-	return recousedEvents
 }
 
 export const traversCrossingEvents = (

@@ -5,16 +5,12 @@ import { useAppState } from "../../hooks/useAppState"
 interface CellProps {
 	start: Date;
 	end: Date;
-	resourceKey?: string;
-	resourceVal?: string | number;
 	children?: JSX.Element;
 }
 
 const Cell = forwardRef(({
 	start,
 	end,
-	resourceKey,
-	resourceVal,
 	children,
 }: CellProps, ref: ForwardedRef<HTMLButtonElement>) => {
 	const {triggerDialog, onDrop} = useAppState()
@@ -27,8 +23,7 @@ const Cell = forwardRef(({
 			onClick={() => {
 				triggerDialog(true, {
 					start,
-					end,
-					[resourceKey || ""]: resourceVal,
+					end
 				})
 			}}
 			onDragOver={(e) => {
@@ -50,7 +45,7 @@ const Cell = forwardRef(({
 			onDrop={(e) => {
 				e.currentTarget.style.backgroundColor = ""
 				const eventId = e.dataTransfer.getData("text")
-				onDrop(eventId, start, resourceKey, resourceVal)
+				onDrop(eventId, start)
 			}}
 		>
 			{children}

@@ -1,5 +1,6 @@
 import { ProcessedEvent } from "../../types";
 import { WeekCellProps } from "./EmptyCell";
+import React from "react";
 export declare type RowProps = Omit<WeekCellProps & {
     hourIndex: number;
     daysList: Date[];
@@ -8,4 +9,4 @@ export declare type RowProps = Omit<WeekCellProps & {
     hour: Date;
     startHour: number;
 }, 'start' | 'end' | 'day'>;
-export declare const Row: (props: RowProps) => JSX.Element;
+export declare const Row: React.MemoExoticComponent<(props: RowProps) => JSX.Element>;

@@ -1,6 +1,6 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { Button, IconButton, MenuItem, MenuList, Popover, Toolbar, useMediaQuery, useTheme, } from "@mui/material"
-import { Fragment, useState } from "react"
+import { Fragment, memo, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { DayDateBtn } from "./DayDateBtn"
 import { MonthDateBtn } from "./MonthDateBtn"
@@ -9,7 +9,7 @@ import React from "react"
 
 export type View = "month" | "week" | "day";
 
-const Navigation = () => {
+const Navigation = memo(() => {
 	const {selectedDate, view, week, handleState, getViews} = useAppState()
 	const [ anchorEl, setAnchorEl ] = useState<Element | null>(null)
 	const theme = useTheme()
@@ -118,6 +118,6 @@ const Navigation = () => {
 			</div>
 		</Toolbar>
 	)
-}
+})
 
 export { Navigation }
