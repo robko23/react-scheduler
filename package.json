@@ -1,6 +1,6 @@
 {
     "name": "@robko23/react-scheduler",
-    "version": "2.1.3",
+    "version": "2.2.0",
     "description": "React scheduler component based on Material-UI & date-fns",
     "main": "./dist/Scheduler.js",
     "//types": "./dist/index.d.ts",
