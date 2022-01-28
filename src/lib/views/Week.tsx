@@ -38,7 +38,7 @@ export interface WeekProps {
 // size of one multiday event
 const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT
 
-const Week = React.memo(() => {
+const Week = () => {
 	const {
 		week,
 		selectedDate,
@@ -108,9 +108,10 @@ const Week = React.memo(() => {
 				</Paper>
 			)
 		})
-	}, [visibleWeekEnd, visibleWeekStart])
+	}, [ visibleWeekEnd, visibleWeekStart ])
 
-	const renderTable = useCallback(() => {
+
+	const renderTable =/* useCallback(*/() => {
 		// all events in current week
 		const allWeekMulti = events.filter(
 			(e) =>
@@ -146,16 +147,17 @@ const Week = React.memo(() => {
 				<RowWithTime
 					daysList={daysList}
 					hours={hours}
-					resourcedEvents={events}
+					events={events}
 					startHour={startHour}
 					step={step}
 					cellRenderer={cellRenderer}
 				/>
 			</TableGrid>
 		)
-	}, [cellRenderer, daysList, events, handleGotoDay, hours, renderMultiDayEvents, startHour, step, visibleWeekStart])
+	}//, [cellRenderer, daysList, events, handleGotoDay, hours, renderMultiDayEvents, startHour, step,
+	// visibleWeekStart])
 
 	return renderTable()
-})
+}
 
 export { Week }

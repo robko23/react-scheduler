@@ -1,10 +1,9 @@
 import { addMinutes, differenceInMinutes, isEqual } from "date-fns"
-import { ReactChild, useEffect, useReducer } from "react"
-import { arraytizeFieldVal, getAvailableViews, getOneView, } from "../../helpers/generals"
+import React, { ReactChild, useEffect, useReducer } from "react"
+import { getAvailableViews, getOneView, } from "../../helpers/generals"
 import { EventActions, ProcessedEvent, SchedulerProps } from "../../types"
 import { defaultProps, SchedulerState, SelectedRange, StateContext, } from "./stateContext"
 import { stateReducer } from "./stateReducer"
-import React from "react"
 
 interface AppProps {
 	children: ReactChild;
@@ -48,6 +47,7 @@ const AppState = ({initial, children}: AppProps) => {
 	const updateProps = (updatedProps: any) => {
 		dispatch({type: "updateProps", payload: updatedProps})
 	}
+
 	useEffect(() => {
 		if ( state.mounted ) {
 			updateProps({
@@ -94,6 +94,7 @@ const AppState = ({initial, children}: AppProps) => {
 		selected: SelectedRange | ProcessedEvent
 	) => {
 		dispatch({type: "triggerDialog", payload: {status, selected}})
+
 	}
 	const triggerLoading = (status: boolean) => {
 		// Trigger if not out-sourced by props
@@ -101,6 +102,7 @@ const AppState = ({initial, children}: AppProps) => {
 			dispatch({type: "triggerLoading", payload: status})
 		}
 	}
+
 	const handleGotoDay = (day: Date) => {
 		const views = getViews()
 		if ( views.includes("day") ) {
@@ -113,6 +115,7 @@ const AppState = ({initial, children}: AppProps) => {
 			console.warn("No Day/Week views available")
 		}
 	}
+
 	const onDrop = async (
 		eventId: string,
 		startTime: Date
@@ -138,19 +141,8 @@ const AppState = ({initial, children}: AppProps) => {
 			end: addMinutes(startTime, diff),
 		}
 
-		// Local
 		if ( !onEventDrop || typeof onEventDrop !== "function" ) {
 			return confirmEvent(updatedEvent, "edit")
-		}
-		// Remote
-		try {
-			triggerLoading(true)
-			const _event = await onEventDrop(startTime, updatedEvent, droppedEvent)
-			if ( _event ) {
-				confirmEvent(_event, "edit")
-			}
-		} finally {
-			triggerLoading(false)
 		}
 	}
 

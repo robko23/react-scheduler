@@ -39,7 +39,6 @@ export const MonthCell = ({
 	useLayoutEffect(() => {
 		if ( ref.current?.getBoundingClientRect()?.height ) {
 			setCellSize(ref.current?.getBoundingClientRect()?.height)
-			console.log(ref.current?.getBoundingClientRect()?.height)
 		}
 	}, [ ref.current ])
 

@@ -110,7 +110,7 @@ const Day = () => {
 					{renderMultiDayEvents(resourcedEvents)}
 				</GridHeaderCell>
 
-				<RowWithTime daysList={[ selectedDate ]} step={step} resourcedEvents={resourcedEvents}
+				<RowWithTime daysList={[ selectedDate ]} step={step} events={resourcedEvents}
 							 startHour={startHour} hours={hours}/>
 				{/*/!* Body *!/*/}
 				{/*{hours.map((hour, hourIndex) => {*/}

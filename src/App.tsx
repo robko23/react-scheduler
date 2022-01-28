@@ -11,7 +11,7 @@ const App = () => {
 		<Scheduler
 			// dialogMaxWidth="sm"
 			// loading
-			view="month"
+			view="week"
 			events={EVENTS}
 			locale={cs}
 			selectedDate={new Date()}

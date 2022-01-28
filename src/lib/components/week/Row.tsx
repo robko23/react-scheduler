@@ -1,13 +1,13 @@
+import React, { memo } from "react"
 import { ProcessedEvent } from "../../types"
 import { CellWithEvent } from "./CellWithEvent"
 import { WeekCellProps } from "./EmptyCell"
-import React, { memo } from "react"
 
 export type RowProps = Omit<WeekCellProps & {
 	hourIndex: number,
 	daysList: Date[],
 	step: number,
-	resourcedEvents: ProcessedEvent[],
+	events: ProcessedEvent[],
 	hour: Date,
 	startHour: number
 }, 'start' | 'end' | 'day'>
