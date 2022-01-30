@@ -1,6 +1,6 @@
 {
     "name": "@robko23/react-scheduler",
-    "version": "2.2.1",
+    "version": "3.0.0",
     "description": "React scheduler component based on Material-UI & date-fns",
     "main": "./dist/Scheduler.js",
     "//types": "./dist/index.d.ts",
@@ -37,11 +37,13 @@
         "@testing-library/react": "^12.1.2",
         "@testing-library/user-event": "^13.5.0",
         "@types/jest": "^27.0.2",
+        "@types/lodash.merge": "^4.6.6",
         "@types/node": "^16.11.6",
         "@types/react": "^17.0.33",
         "@types/react-dom": "^17.0.10",
         "css-loader": "^4.3.0",
         "date-fns": "^2.21.2",
+        "jest": "^27.4.7",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-scripts": "^5.0.0",
@@ -49,17 +51,15 @@
         "ts-loader": "^8.3.0",
         "typescript": "^4.4.4",
         "webpack-cli": "^4.7.0",
-        "webpack-node-externals": "^3.0.0",
-        "jest": "^27.4.7",
-        "@types/lodash.merge": "^4.6.6"
+        "webpack-node-externals": "^3.0.0"
     },
     "peerDependencies": {
         "@mui/icons-material": ">=5.0.0",
         "@mui/lab": ">=5.0.0-alpha",
         "@mui/material": ">=5.0.0",
         "date-fns": ">=2.2",
-        "react-use": "^17.3.2",
-        "lodash.merge": "^4.6.2"
+        "lodash.merge": "^4.6.2",
+        "react-use": "^17.3.2"
     },
     "eslintConfig": {
         "extends": [
