@@ -50,13 +50,13 @@ export const CellWithEvent = memo((props: Props): ReactElement => {
 
 			{/* Events of each day - run once on the top hour column */}
 			{props.hourIndex === 0 && minuteHeight &&
-                <TodayEvents
-                    todayEvents={todayEvents}
-                    today={props.day}
-                    minuteHeight={minuteHeight}
-                    startHour={props.startHour}
-                    step={props.step}
-                    direction={direction}/>
+            <TodayEvents
+                todayEvents={todayEvents}
+                today={props.day}
+                minuteHeight={minuteHeight}
+                startHour={props.startHour}
+                step={props.step}
+                direction={direction}/>
 			}
 
 			<EmptyCell

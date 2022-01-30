@@ -1,4 +1,3 @@
-import { Paper } from "@mui/material"
 import {
 	addDays,
 	clamp,
@@ -18,7 +17,7 @@ import {
 import React, { useCallback } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import EventItem from "../components/events/EventItem"
-import { RowWithTime } from "../components/week/RowWithTime"
+import { RowsWithTime } from "../components/week/RowsWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
 import { useAppState } from "../hooks/useAppState"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
@@ -89,29 +88,27 @@ const Week = () => {
 			)
 
 			return (
-				<Paper
+				<EventItem
 					key={event.event_id}
-					className="rs__multi_day"
-					elevation={2}
+					event={event}
+					hasPrev={hasPrev}
+					hasNext={hasNext}
+					multiday
 					sx={{
 						top: index * MULTI_SPACE + 45,
 						width: `${100 * eventLength}%`,
-						left: `${100 * eventStartOffset}%`
+						left: `${100 * eventStartOffset}%`,
+						position: "absolute",
+						zIndex: 1,
+						textOverflow: "ellipsis",
 					}}
-				>
-					<EventItem
-						event={event}
-						hasPrev={hasPrev}
-						hasNext={hasNext}
-						multiday
-					/>
-				</Paper>
+				/>
 			)
 		})
 	}, [ visibleWeekEnd, visibleWeekStart ])
 
 
-	const renderTable =/* useCallback(*/() => {
+	const renderTable = () => {
 		// all events in current week
 		const allWeekMulti = events.filter(
 			(e) =>
@@ -144,7 +141,7 @@ const Week = () => {
 				))}
 
 				{/* Time Cells */}
-				<RowWithTime
+				<RowsWithTime
 					daysList={daysList}
 					hours={hours}
 					events={events}
@@ -154,8 +151,7 @@ const Week = () => {
 				/>
 			</TableGrid>
 		)
-	}//, [cellRenderer, daysList, events, handleGotoDay, hours, renderMultiDayEvents, startHour, step,
-	// visibleWeekStart])
+	}
 
 	return renderTable()
 }

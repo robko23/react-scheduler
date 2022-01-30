@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material"
 import { format, isToday } from "date-fns"
-import { useAppState } from "../../hooks/useAppState"
 import React from "react"
+import { useAppState } from "../../hooks/useAppState"
 
 interface TodayTypoProps {
 	date: Date;

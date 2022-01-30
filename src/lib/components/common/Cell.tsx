@@ -13,7 +13,7 @@ const Cell = forwardRef(({
 	end,
 	children,
 }: CellProps, ref: ForwardedRef<HTMLButtonElement>) => {
-	const {triggerDialog, onDrop} = useAppState()
+	const {triggerDialog, onDrop, disableEditor, onCellClick} = useAppState()
 	const theme = useTheme()
 
 	return (
@@ -21,10 +21,12 @@ const Cell = forwardRef(({
 			ref={ref}
 			fullWidth
 			onClick={() => {
-				triggerDialog(true, {
-					start,
-					end
-				})
+				if(!disableEditor)
+					triggerDialog(true, {
+						start,
+						end
+					})
+				onCellClick?.(start, end)
 			}}
 			onDragOver={(e) => {
 				e.currentTarget.style.backgroundColor = alpha(

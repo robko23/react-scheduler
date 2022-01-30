@@ -1,12 +1,11 @@
 import DatePicker from "@mui/lab/DatePicker"
 import { Button } from "@mui/material"
 import { addDays, endOfWeek, format, startOfWeek } from "date-fns"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { WeekProps } from "../../views/Week"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
-import React from "react"
 
 interface WeekDateBtnProps {
 	selectedDate: Date;
@@ -21,7 +20,7 @@ const WeekDateBtn = ({
 	onChange,
 	weekProps,
 }: WeekDateBtnProps) => {
-	const {locale} = useAppState()
+	const {locale, localizationTexts} = useAppState()
 	const [ open, setOpen ] = useState(false)
 	const {weekStartOn} = weekProps
 	const weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
@@ -43,7 +42,8 @@ const WeekDateBtn = ({
 	}
 	return (
 		<>
-			<LocaleArrow type="prev" onClick={handlePrev} tooltip={'Previous week'}/>
+			<LocaleArrow type="prev" onClick={handlePrev}
+						 tooltip={localizationTexts?.previousWeek ?? 'Previous week'}/>
 			<DateProvider>
 				<DatePicker
 					open={open}
@@ -67,7 +67,8 @@ const WeekDateBtn = ({
 					)}
 				/>
 			</DateProvider>
-			<LocaleArrow type="next" onClick={handleNext} tooltip={'Next week'}/>
+			<LocaleArrow type="next" onClick={handleNext}
+						 tooltip={localizationTexts?.nextWeek ?? 'Next week'}/>
 		</>
 	)
 }

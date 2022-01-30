@@ -1,4 +1,5 @@
 import { SchedulerState } from "./stateContext"
+import merge from 'lodash.merge'
 
 interface Action {
 	type: string;
@@ -11,10 +12,7 @@ const stateReducer = (
 ): SchedulerState => {
 	switch ( action.type ) {
 		case "updateProps":
-			return {
-				...state,
-				...action.payload,
-			}
+			return merge(state, action.payload)
 		case "set":
 			const {name, value} = action.payload
 			return {

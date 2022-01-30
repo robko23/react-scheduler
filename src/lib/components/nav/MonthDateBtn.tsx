@@ -1,11 +1,10 @@
 import DatePicker from "@mui/lab/DatePicker"
 import { Button } from "@mui/material"
 import { format, getMonth, setMonth } from "date-fns"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
-import React from "react"
 
 interface MonthDateBtnProps {
 	selectedDate: Date;
@@ -14,7 +13,7 @@ interface MonthDateBtnProps {
 }
 
 const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
-	const {locale} = useAppState()
+	const {locale, localizationTexts} = useAppState()
 	const [ open, setOpen ] = useState(false)
 	const currentMonth = getMonth(selectedDate)
 
@@ -36,7 +35,8 @@ const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
 
 	return (
 		<>
-			<LocaleArrow type="prev" onClick={handlePrev} tooltip={'Previous month'}/>
+			<LocaleArrow type="prev" onClick={handlePrev}
+						 tooltip={localizationTexts?.previousMonth ?? 'Previous month'}/>
 			<DateProvider>
 				<DatePicker
 					open={open}
@@ -56,7 +56,8 @@ const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
 					)}
 				/>
 			</DateProvider>
-			<LocaleArrow type="next" onClick={handleNext} tooltip={'Next month'}/>
+			<LocaleArrow type="next" onClick={handleNext}
+						 tooltip={localizationTexts?.nextMonth ?? 'Next month'}/>
 		</>
 	)
 }

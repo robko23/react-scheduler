@@ -1,4 +1,4 @@
-import { DialogProps, GridSize } from "@mui/material"
+import { DialogProps, GridSize, SxProps, Theme } from "@mui/material"
 import { Locale } from "date-fns"
 import { ForwardedRef } from "react"
 import { SelectOption } from "./components/inputs/SelectInput"
@@ -132,25 +132,23 @@ export interface SchedulerHelpers {
 }
 
 export interface SchedulerProps {
-	/**Min height of table
-	 * @default 600
+	/**
+	 * Custom styling
 	 */
-	height: number | string;
+	sx?: SxProps<Theme>
+
 	/** Initial view to load */
 	view: View;
 	/**Month view settings */
-	month: MonthProps | null;
+	month?: MonthProps;
 	/**Week view settings */
-	week: WeekProps | null;
+	week?: WeekProps;
 	/**Day view settings */
-	day: DayProps | null;
+	day?: DayProps;
 	/**Initial date selected */
 	selectedDate: Date;
 	/**Events to display */
 	events: ProcessedEvent[];
-
-	/**Async function to load remote data */
-	remoteEvents?(query: string): Promise<ProcessedEvent[] | void>;
 
 	/**Custom additional fields with it's settings */
 	fields: FieldProps[];
@@ -177,7 +175,7 @@ export interface SchedulerProps {
 	/**Override viewer title component */
 	viewerTitleComponent?(event: ProcessedEvent): JSX.Element;
 
-		/**Direction of table */
+	/**Direction of table */
 	direction: "rtl" | "ltr";
 	/**Edito dialog maxWith
 	 * @default "md"
@@ -196,7 +194,48 @@ export interface SchedulerProps {
 		updatedEvent: ProcessedEvent,
 		originalEvent: ProcessedEvent
 	): Promise<ProcessedEvent | void>;
+
+	/**
+	 * Disables build in editor
+	 */
+	disableEditor?: boolean,
+
+	/**
+	 * Disables build in viewer
+	 */
+	disableViewer?: boolean
+
+	/**
+	 * Fires whenever user clicks on empty cell
+	 * @param cellStart what is the beginning of the cell
+	 * @param cellEnd what is the end of the cell
+	 */
+	onCellClick?: (cellStart: Date, cellEnd: Date) => void
+
+	onEventClick?: (event: ProcessedEvent) => void
+
+	localizationTexts?:LocalizationTexts,
+
+	disableDrag?: boolean
+
+	onDateChange?: (date: Date) => void
 }
+
+export type LocalizationTexts = Partial<{
+	today: string,
+	day: string,
+	week: string,
+	month: string,
+	previousMonth: string,
+	nextMonth: string,
+	previousWeek: string,
+	nextWeek: string,
+	previousDay: string,
+	nextDay: string,
+	more: string,
+	delete: string,
+	cancel: string
+}>
 
 export interface Scheduler extends Partial<SchedulerProps> {
 }

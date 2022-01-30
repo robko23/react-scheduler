@@ -1,23 +1,31 @@
 // import arSA from "date-fns/locale/ar-SA";
 import { cs } from 'date-fns/locale'
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Scheduler } from "./lib/Scheduler"
 import { EVENTS } from "./model/events"
 
 const App = () => {
 	// const [ events, setEvents ] = useState(EVENTS)
+	const [date, setDate] = useState(new Date())
+
+	useEffect(() => {
+		console.log(date)
+	}, [date])
 
 	return (
 		<Scheduler
 			// dialogMaxWidth="sm"
 			// loading
-			view="week"
+			view="month"
 			events={EVENTS}
 			locale={cs}
-			selectedDate={new Date()}
-			height={'100%'}
+			selectedDate={date}
+			onDateChange={setDate}
+			sx={{
+				height: '100%',
+			}}
 			week={{
-				weekDays: [ 0, 1, 2, 3, 4, 5, 6],
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
 				weekStartOn: 1,
 				startHour: 8,
 				endHour: 15,
@@ -27,16 +35,31 @@ const App = () => {
 				// },
 			}}
 			month={{
-				weekDays: [0, 1, 2, 3, 4, 5 ],
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
 				weekStartOn: 1,
 				startHour: 7,
 				endHour: 15,
 			}}
 			day={{
-				startHour: 9,
-				endHour: 14,
-				step: 60,
+				startHour: 6,
+				endHour: 16,
+				step: 30,
 			}}
+			localizationTexts={{
+				today: 'Dnes',
+				month: 'Měsíc',
+				week: "Týden",
+				day: "Den",
+				more: "Další..."
+			}}
+			// disableDrag
+			disableViewer
+			disableEditor
+			onCellClick={(cellStart, cellEnd) => {
+				console.log(cellStart, cellEnd)
+			}}
+			onEventClick={event => console.log(event)}
+			onEventDrop={async (droppedOn, updatedEvent, originalEvent) => console.log(droppedOn, updatedEvent, originalEvent)}
 			// day={{
 			//   startHour: 8,
 			//   endHour: 18,
@@ -51,48 +74,6 @@ const App = () => {
 			//   });
 			//   // return null;
 			//   // return EVENTS;
-			// }}
-			// resources={[
-			// {
-			//   admin_id: 1,
-			//   title: "One",
-			//   mobile: "555666777",
-			//   avatar: "https://picsum.photos/200/300",
-			//   color: "#ab2d2d",
-			// },
-			// {
-			//   admin_id: 2,
-			//   title: "Two",
-			//   mobile: "555666777",
-			//   avatar: "https://picsum.photos/200/300",
-			//   color: "#58ab2d",
-			// },
-			//   {
-			//     admin_id: 3,
-			//     title: "Three",
-			//     mobile: "555666777",
-			//     avatar: "https://picsum.photos/200/300",
-			//     color: "#a001a2",
-			//   },
-			//   {
-			//     admin_id: 4,
-			//     title: "Four",
-			//     mobile: "555666777",
-			//     avatar: "https://picsum.photos/200/300",
-			//     color: "#08c5bd",
-			//   },
-			// ]}
-			// resourceFields={{
-			//   idField: "admin_id",
-			//   textField: "title",
-			//   subTextField: "mobile",
-			//   avatarField: "title",
-			//   colorField: "color",
-			// }}
-			// resourceViewMode="tabs"
-			// recourseHeaderComponent={(recourse) => {
-			//   console.log(recourse);
-			//   return <div>HAHA</div>;
 			// }}
 			// fields={[
 			//   {

@@ -39,17 +39,18 @@ const Month = () => {
 
 	const renderTable = () => {
 		return (
-			<TableGrid days={daysList.length} indent="0">
+			<TableGrid days={daysList.length} indent="0" className='MonthGrid'>
 				{/* Header Days */}
 				{daysList.map((date) => (
-					<GridHeaderCell key={date.toISOString()}>
+					<GridHeaderCell key={date.toISOString()} className='MonthHeaderCell'>
 						<Typography align="center" variant="h6">
 							{format(date, "eee", {locale})}
 						</Typography>
 					</GridHeaderCell>
 				))}
 
-				<MonthRows eachWeekStart={eachWeekStart} weekDays={weekDays} startHour={startHour} endHour={endHour}
+				<MonthRows cellRenderer={cellRenderer}
+					eachWeekStart={eachWeekStart} weekDays={weekDays} startHour={startHour} endHour={endHour}
 						   daysList={daysList} monthStart={monthStart}/>
 
 			</TableGrid>

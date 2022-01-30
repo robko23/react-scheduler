@@ -1,6 +1,5 @@
 import { TextField, Typography } from "@mui/material"
-import { useEffect, useState } from "react"
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 interface EditorInputProps {
 	variant?: "standard" | "filled" | "outlined";

@@ -4,14 +4,25 @@ import ClearRoundedIcon from "@mui/icons-material/ClearRounded"
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded"
 import EditRoundedIcon from "@mui/icons-material/EditRounded"
 import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded"
-import SupervisorAccountRoundedIcon from "@mui/icons-material/SupervisorAccountRounded"
-import { Button, ButtonBase, IconButton, Paper, Popover, Slide, Typography, useTheme, } from "@mui/material"
+import {
+	Box,
+	Button,
+	ButtonBase,
+	IconButton,
+	Paper,
+	Popover,
+	Slide,
+	SxProps,
+	Theme,
+	Typography,
+	useTheme,
+} from "@mui/material"
+import { styled } from "@mui/material/styles"
 import { format } from "date-fns"
-import { Fragment, useState } from "react"
+import React, { Fragment, ReactElement, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
 import { PopperInner } from "../../styles/styles"
 import { ProcessedEvent } from "../../types"
-import React from "react"
 
 interface EventItemProps {
 	event: ProcessedEvent;
@@ -19,7 +30,29 @@ interface EventItemProps {
 	hasPrev?: boolean;
 	hasNext?: boolean;
 	showdate?: boolean;
+	sx?: SxProps<Theme>
 }
+
+const EventItemRoot = styled(Paper, {
+	shouldForwardProp: prop => prop !== 'disabled' && prop !== 'color'
+})<{ color?: string }>(({theme, color}) => ({
+	width: "100%",
+	display: "block",
+	background: color || theme.palette.primary.main,
+	color: theme.palette.primary.contrastText,
+	overflow: "hidden",
+}))
+
+const Item = styled(Box)(({theme}) => ({
+	padding: theme.spacing(0.3)
+}))
+
+const Multiday = styled(Box)(({theme}) => ({
+	padding: theme.spacing(0.3),
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "space-between",
+}))
 
 const EventItem = ({
 	event,
@@ -27,7 +60,8 @@ const EventItem = ({
 	hasPrev,
 	hasNext,
 	showdate,
-}: EventItemProps) => {
+	sx
+}: EventItemProps): ReactElement<EventItemProps> => {
 	const {
 		triggerDialog,
 		onDelete,
@@ -39,6 +73,10 @@ const EventItem = ({
 		direction,
 		locale,
 		viewerTitleComponent,
+		localizationTexts,
+		onEventClick,
+		disableViewer,
+		disableDrag
 	} = useAppState()
 	const [ anchorEl, setAnchorEl ] = useState<Element | null>(null)
 	const [ deleteConfirm, setDeleteConfirm ] = useState(false)
@@ -82,7 +120,7 @@ const EventItem = ({
 	}
 
 	let item = (
-		<div style={{padding: 2}}>
+		<Item className='Item'>
 			<Typography variant="subtitle2" style={{fontSize: 12}} noWrap>
 				{event.title}
 			</Typography>
@@ -93,19 +131,12 @@ const EventItem = ({
 					})} - ${format(event.end, "hh:mm a", {locale: locale})}`}
 				</Typography>
 			)}
-		</div>
+		</Item>
 	)
 
 	if ( multiday ) {
 		item = (
-			<div
-				style={{
-					padding: 2,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-				}}
-			>
+			<Multiday className='Multiday'>
 				<Typography sx={{fontSize: 11}} noWrap>
 					{hasPrev ? (
 						<PrevArrow fontSize="small" sx={{display: "flex"}}/>
@@ -128,7 +159,7 @@ const EventItem = ({
 						showdate && format(event.end, "hh:mm a", {locale: locale})
 					)}
 				</Typography>
-			</div>
+			</Multiday>
 		)
 	}
 
@@ -186,14 +217,14 @@ const EventItem = ({
 										size="small"
 										onClick={handleConfirmDelete}
 									>
-										DELETE
+										{localizationTexts?.delete ?? "DELETE"}
 									</Button>
 									<Button
 										style={{color: theme.palette.action.disabled}}
 										size="small"
 										onClick={() => setDeleteConfirm(false)}
 									>
-										CANCEL
+										{localizationTexts?.cancel ?? "CANCEL"}
 									</Button>
 								</div>
 							</Slide>
@@ -231,83 +262,70 @@ const EventItem = ({
 
 	return (
 		<Fragment>
-			<Paper
-				style={{
-					width: "100%",
-					height: "100%",
-					display: "block",
-					background: event.disabled
-						? theme.palette.action.disabled
-						: event.color || theme.palette.primary.main,
-					color: event.disabled
-						? theme.palette.text.disabled
-						: theme.palette.primary.contrastText,
-					cursor: event.disabled ? "inherit" : "pointer",
-					overflow: "hidden",
-				}}
-			>
+			<EventItemRoot color={event.color} className='EventItem' sx={sx} elevation={2}>
 				<ButtonBase
 					onClick={(e) => {
 						e.preventDefault()
 						e.stopPropagation()
-						triggerViewer(e.currentTarget)
+						if ( !disableViewer ) {
+							triggerViewer(e.currentTarget)
+						}
+						onEventClick?.(event)
 					}}
 					disabled={event.disabled}
-					style={{
+					sx={{
 						width: "100%",
 						height: "100%",
 						display: "block",
+						background: event.disabled ? (theme) => theme.palette.action.disabled : "inherit"
+					}}
+					draggable={!disableDrag}
+					onDragStart={(e) => {
+						e.stopPropagation()
+						e.dataTransfer.setData("text/plain", `${event.event_id}`)
+						e.currentTarget.style.backgroundColor = theme.palette.error.main
+					}}
+					onDragEnd={(e) => {
+						e.currentTarget.style.backgroundColor =
+							event.color || theme.palette.primary.main
+					}}
+					onDragOver={(e) => {
+						e.stopPropagation()
+						e.preventDefault()
+					}}
+					onDragEnter={(e) => {
+						e.stopPropagation()
+						e.preventDefault()
 					}}
 				>
-					<div
-						style={{
-							height: "100%",
-						}}
-						draggable
-						onDragStart={(e) => {
-							e.stopPropagation()
-							e.dataTransfer.setData("text/plain", `${event.event_id}`)
-							e.currentTarget.style.backgroundColor = theme.palette.error.main
-						}}
-						onDragEnd={(e) => {
-							e.currentTarget.style.backgroundColor =
-								event.color || theme.palette.primary.main
-						}}
-						onDragOver={(e) => {
-							e.stopPropagation()
-							e.preventDefault()
-						}}
-						onDragEnter={(e) => {
-							e.stopPropagation()
-							e.preventDefault()
-						}}
-					>
-						{item}
-					</div>
+					{item}
 				</ButtonBase>
-			</Paper>
+			</EventItemRoot>
 
 			{/* Viewer */}
-			<Popover
-				open={Boolean(anchorEl)}
-				anchorEl={anchorEl}
-				onClose={(e) => {
+			{!disableViewer &&
+            <Popover
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                onClose={(e) => {
 					triggerViewer()
 				}}
-				anchorOrigin={{
+                anchorOrigin={{
 					vertical: "center",
 					horizontal: "center",
 				}}
-				transformOrigin={{
+                transformOrigin={{
 					vertical: "top",
 					horizontal: "center",
 				}}
-				onClick={(e) => {
+                onClick={(e) => {
 					e.stopPropagation()
 				}}
-			>
+            >
 				{renderViewer()}
-			</Popover>
+            </Popover>
+			}
+
 		</Fragment>
 	)
 }

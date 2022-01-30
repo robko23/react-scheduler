@@ -1,7 +1,8 @@
 import { Avatar, Typography, useTheme } from "@mui/material"
-import { addDays, format, isSameMonth, isToday, set } from "date-fns"
+import { styled } from "@mui/material/styles"
+import { addDays, endOfDay, format, isSameMonth, isToday } from "date-fns"
 import React, { Fragment, useLayoutEffect, useRef, useState } from "react"
-import { END_OF_THE_DAY, MONTH_NUMBER_SIZE } from "../../helpers/constants"
+import { MONTH_NUMBER_SIZE } from "../../helpers/constants"
 import { useAppState } from "../../hooks/useAppState"
 import { GridCell } from "../../styles/styles"
 import { CellRenderedProps } from "../../types"
@@ -22,6 +23,22 @@ type MonthCellProps = {
 	today: Date,
 }
 
+const MonthCellDayNumber = styled(Avatar, {
+	shouldForwardProp: prop => prop !== 'today'
+})<{today: boolean}>(({theme, today}) => ({
+	width: MONTH_NUMBER_SIZE,
+	height: MONTH_NUMBER_SIZE,
+	position: "absolute",
+	top: 0,
+	background: today
+		? theme.palette.secondary.main
+		: "transparent",
+	color: today
+		? theme.palette.getContrastText(theme.palette.secondary.main)
+		: theme.palette.text.primary,
+	marginBottom: 2,
+}))
+
 export const MonthCell = ({
 	cellRenderer, daysList, monthStart,
 	end, start, day, endDay, startDay, today, weekDays
@@ -40,10 +57,11 @@ export const MonthCell = ({
 		if ( ref.current?.getBoundingClientRect()?.height ) {
 			setCellSize(ref.current?.getBoundingClientRect()?.height)
 		}
-	}, [ ref.current ])
+	}, [])
 
 	return (
 		<GridCell
+			className='MonthCell'
 			ref={ref}
 			key={day.toString()}>
 			{/*region Cell render*/}
@@ -69,21 +87,7 @@ export const MonthCell = ({
 			{/*endregion*/}
 
 			<Fragment>
-				<Avatar
-					sx={{
-						width: MONTH_NUMBER_SIZE,
-						height: MONTH_NUMBER_SIZE,
-						position: "absolute",
-						top: 0,
-						background: isToday(today)
-							? theme.palette.secondary.main
-							: "transparent",
-						color: isToday(today)
-							? theme.palette.getContrastText(theme.palette.secondary.main)
-							: theme.palette.text.primary,
-						marginBottom: 2,
-					}}
-				>
+				<MonthCellDayNumber today={isToday(today)} className='DayNumber'>
 					<Typography
 						color={
 							!isSameMonth(today, monthStart) ? theme.palette.text.disabled : "inherit"
@@ -96,7 +100,7 @@ export const MonthCell = ({
 					>
 						{format(today, "dd")}
 					</Typography>
-				</Avatar>
+				</MonthCellDayNumber>
 
 				{cellSize &&
                 <MonthEvents
@@ -105,7 +109,7 @@ export const MonthCell = ({
                     daysList={daysList}
                     onViewMore={handleGotoDay}
                     weekStart={addDays(startDay, weekDays[0])}
-                    weekEnd={set(endDay, END_OF_THE_DAY)}
+                    weekEnd={endOfDay(endDay)}
                     cellSize={cellSize}
                 />
 				}

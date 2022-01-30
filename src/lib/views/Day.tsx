@@ -1,3 +1,4 @@
+import { Box } from "@mui/material"
 import {
 	differenceInDays,
 	eachMinuteOfInterval,
@@ -12,7 +13,7 @@ import {
 import React from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import EventItem from "../components/events/EventItem"
-import { RowWithTime } from "../components/week/RowWithTime"
+import { RowsWithTime } from "../components/week/RowsWithTime"
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
 import { useAppState } from "../hooks/useAppState"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
@@ -57,38 +58,38 @@ const Day = () => {
 		)
 
 		return (
-			<div
-				className="rs__block_col"
-				style={{height: MULTI_DAY_EVENT_HEIGHT * multiDays.length}}
+			<Box
+				// className="rs__block_col"
+				sx={{
+					height: MULTI_DAY_EVENT_HEIGHT * multiDays.length,
+					position: 'relative'
+				}}
 			>
 				{multiDays.map((event, i) => {
 					const hasPrev = isBefore(event.start, startOfDay(selectedDate))
 					const hasNext = isAfter(event.end, endOfDay(selectedDate))
 					return (
-						<div
+						<EventItem
+							event={event}
+							multiday
+							hasPrev={hasPrev}
+							hasNext={hasNext}
 							key={event.event_id}
-							className="rs__multi_day"
-							style={{
-								top: i * MULTI_DAY_EVENT_HEIGHT,
+							sx={{
+								position: "absolute",
+								zIndex: 1,
+								textOverflow: "ellipsis",
+								top: `${i * MULTI_DAY_EVENT_HEIGHT}px`,
 								width: "100%",
 							}}
-						>
-							<EventItem
-								event={event}
-								multiday
-								hasPrev={hasPrev}
-								hasNext={hasNext}
-							/>
-						</div>
+						/>
 					)
 				})}
-			</div>
+			</Box>
 		)
 	}
 
 	const renderTable = () => {
-		// fixme
-		let resourcedEvents = todayEvents
 
 		const allWeekMulti = events.filter(
 			(e) =>
@@ -105,85 +106,13 @@ const Day = () => {
 				{/* Header */}
 				<GridCell/>
 				<GridHeaderCell
-					style={{height: headerHeight}}>
+					sx={{height: `${headerHeight}px`}}>
 					<TodayTypo date={selectedDate}/>
-					{renderMultiDayEvents(resourcedEvents)}
+					{renderMultiDayEvents(todayEvents)}
 				</GridHeaderCell>
 
-				<RowWithTime daysList={[ selectedDate ]} step={step} events={resourcedEvents}
-							 startHour={startHour} hours={hours}/>
-				{/*/!* Body *!/*/}
-				{/*{hours.map((hour, hourIndex) => {*/}
-				{/*	const start = new Date(*/}
-				{/*		`${format(selectedDate, "yyyy MM dd")} ${format(hour, "hh:mm a")}`*/}
-				{/*	)*/}
-				{/*	const end = new Date(*/}
-				{/*		`${format(selectedDate, "yyyy MM dd")} ${format(*/}
-				{/*			addMinutes(hour, step),*/}
-				{/*			"hh:mm a"*/}
-				{/*		)}`*/}
-				{/*	)*/}
-				{/*	const field = resourceFields.idField*/}
-
-				{/*	return (*/}
-				{/*		<Fragment key={hourIndex}>*/}
-				{/*			/!* Time Cells *!/*/}
-				{/*			<GridTimeCell>*/}
-				{/*				<Typography variant="caption">*/}
-				{/*					{format(hour, "hh:mm a", {locale: locale})}*/}
-				{/*				</Typography>*/}
-				{/*			</GridTimeCell>*/}
-
-				{/*			<CellWithEvent*/}
-				{/*				hour={hour}*/}
-				{/*				step={step}*/}
-				{/*				hourIndex={hourIndex}*/}
-				{/*				day={}*/}
-				{/*				startHour={startHour}*/}
-				{/*				resourcedEvents={recousedEvents}*/}
-				{/*			/>*/}
-				{/*			/!*<GridCell>*!/*/}
-				{/*			/!*	/!* Events of this day - run once on the top hour column *!/*!/*/}
-				{/*			/!*	{i === 0 && (*!/*/}
-				{/*			/!*		<TodayEvents*!/*/}
-				{/*			/!*			todayEvents={recousedEvents.filter(*!/*/}
-				{/*			/!*				(e) =>*!/*/}
-				{/*			/!*					!differenceInDays(e.end, e.start) &&*!/*/}
-				{/*			/!*					isSameDay(selectedDate, e.start)*!/*/}
-				{/*			/!*			)}*!/*/}
-				{/*			/!*			today={selectedDate}*!/*/}
-				{/*			/!*			minuteHeight={MINUTE_HEIGHT}*!/*/}
-				{/*			/!*			startHour={startHour}*!/*/}
-				{/*			/!*			step={step}*!/*/}
-				{/*			/!*			direction={direction}*!/*/}
-				{/*			/!*		/>*!/*/}
-				{/*			/!*	)}*!/*/}
-				{/*			/!*	/!* Cell *!/*!/*/}
-				{/*			/!*	{cellRenderer ? (*!/*/}
-				{/*			/!*		cellRenderer({*!/*/}
-				{/*			/!*			day: selectedDate,*!/*/}
-				{/*			/!*			start,*!/*/}
-				{/*			/!*			end,*!/*/}
-				{/*			/!*			onClick: () =>*!/*/}
-				{/*			/!*				triggerDialog(true, {*!/*/}
-				{/*			/!*					start,*!/*/}
-				{/*			/!*					end,*!/*/}
-				{/*			/!*					[field]: resource ? resource[field] : null,*!/*/}
-				{/*			/!*				}),*!/*/}
-				{/*			/!*			[field]: resource ? resource[field] : null,*!/*/}
-				{/*			/!*		})*!/*/}
-				{/*			/!*	) : (*!/*/}
-				{/*			/!*		<Cell*!/*/}
-				{/*			/!*			start={start}*!/*/}
-				{/*			/!*			end={end}*!/*/}
-				{/*			/!*			resourceKey={field}*!/*/}
-				{/*			/!*			resourceVal={resource ? resource[field] : null}*!/*/}
-				{/*			/!*		/>*!/*/}
-				{/*			/!*	)}*!/*/}
-				{/*			/!*</GridCell>*!/*/}
-				{/*		</Fragment>*/}
-				{/*	)*/}
-				{/*})}*/}
+				<RowsWithTime daysList={[ selectedDate ]} step={step} events={todayEvents}
+							  startHour={startHour} hours={hours}/>
 			</TableGrid>
 		)
 	}

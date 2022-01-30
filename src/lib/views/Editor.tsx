@@ -8,9 +8,8 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material"
-import React from "react"
 import { addMinutes, differenceInMinutes } from "date-fns"
-import { Fragment, useState } from "react"
+import React, { Fragment, useState } from "react"
 import { EditorDatePicker } from "../components/inputs/DatePicker"
 import { EditorInput } from "../components/inputs/Input"
 import { EditorSelect } from "../components/inputs/SelectInput"

@@ -47,7 +47,7 @@ export const traversCrossingEvents = (
 ): ProcessedEvent[] => {
 	return todayEvents.filter(
 		(e) =>
-			e.event_id !== event.event_id &&
+			// e.event_id !== event.event_id &&
 			(isWithinInterval(addMinutes(event.start, 1), {
 					start: e.start,
 					end: e.end,

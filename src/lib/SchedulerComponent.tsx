@@ -1,15 +1,48 @@
 import { Box, CircularProgress, Typography } from "@mui/material"
-import { useMemo } from "react"
+import { styled } from "@mui/material/styles"
+import React, { useMemo } from "react"
 import { Navigation } from "./components/nav/Navigation"
 import { useAppState } from "./hooks/useAppState"
 import { Day } from "./views/Day"
 import Editor from "./views/Editor"
 import { Month } from "./views/Month"
 import { Week } from "./views/Week"
-import React from "react"
+
+const Calendar = styled(Box, {
+	name: 'Calendar',
+})(() => ({
+	position: "relative",
+	display: 'flex',
+	flexDirection: 'column'
+}))
+
+const LoadingOverlay = styled(Box, {
+	name: 'LoadingOverlay',
+})(({theme}) => ({
+	background: theme.palette.action.disabledBackground,
+	position: "absolute",
+	left: 0,
+	right: 0,
+	top: 0,
+	bottom: 0,
+	zIndex: 9,
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	justifyContent: "center",
+}))
+
+const Table = styled(Box, {
+	name: 'Table'
+})(() => ({
+	flexGrow: 1,
+	width: "100%",
+	overflowX: "auto",
+	overflowY: "hidden",
+}))
 
 const SchedulerComponent = () => {
-	const {loading, view, dialog, height} = useAppState()
+	const {loading, view, dialog, sx, disableEditor} = useAppState()
 
 	const Views = useMemo(() => {
 		switch ( view ) {
@@ -25,48 +58,23 @@ const SchedulerComponent = () => {
 	}, [ view ])
 
 	return (
-		<Box sx={{
-			height,
-			position: "relative",
-			display: 'flex',
-			flexDirection: 'column'
-		}}>
+		<Calendar sx={sx}>
 			{loading &&
-            <Box sx={{
-				background: theme => theme.palette.action.disabledBackground,
-				position: "absolute",
-				left: 0,
-				right: 0,
-				top: 0,
-				bottom: 0,
-				zIndex: 9,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				justifyContent: "center",
-			}}>
+            <LoadingOverlay className='LoadingOverlay'>
                 <CircularProgress size={50}/>
                 <Typography
                     sx={{pt: 10}}
                     align="center">Loading...</Typography>
-            </Box>
+			</LoadingOverlay>
 			}
 
 			<Navigation/>
 			{/*Table*/}
-			<Box
-				sx={{
-					flexGrow: 1,
-					height,
-					width: "100%",
-					overflowX: "auto",
-					overflowY: "hidden",
-				}}
-			>
+			<Table className='Table'>
 				{Views}
-			</Box>
-			{dialog && <Editor/>}
-		</Box>
+			</Table>
+			{!disableEditor && dialog && <Editor/>}
+		</Calendar>
 	)
 }
 

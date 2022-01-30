@@ -1,13 +1,24 @@
 import { addMinutes, differenceInMinutes, isEqual } from "date-fns"
-import React, { ReactChild, useEffect, useReducer } from "react"
+import React, { ReactChild, useCallback, useEffect, useReducer } from "react"
 import { getAvailableViews, getOneView, } from "../../helpers/generals"
+import { objectDifference } from "../../helpers/object"
 import { EventActions, ProcessedEvent, SchedulerProps } from "../../types"
 import { defaultProps, SchedulerState, SelectedRange, StateContext, } from "./stateContext"
 import { stateReducer } from "./stateReducer"
 
 interface AppProps {
 	children: ReactChild;
-	initial: Partial<SchedulerProps>;
+	passedProps: Partial<SchedulerProps>;
+}
+
+const propsDiff = (state: SchedulerState, updatedProps: Partial<SchedulerProps>): Partial<SchedulerProps> => {
+	const extractedProps: Partial<SchedulerProps> = {}
+	Object.keys(updatedProps).map((untyped_key) => {
+		const key = untyped_key as keyof SchedulerProps
+		// @ts-ignore
+		extractedProps[key] = updatedProps[key]
+	})
+	return objectDifference(extractedProps, updatedProps, [ 'sx', 'selectedDate' ])
 }
 
 const initialState = (initial: Partial<SchedulerProps>): SchedulerState => {
@@ -23,57 +34,31 @@ const initialState = (initial: Partial<SchedulerProps>): SchedulerState => {
 	} as SchedulerState
 }
 
-const AppState = ({initial, children}: AppProps) => {
-	const {
-		events,
-		month,
-		week,
-		day,
-		fields,
-		locale,
-		direction,
-		loading,
-		onEventDrop,
-	} = initial
-	const [ state, dispatch ] = useReducer(stateReducer, initialState(initial))
+const AppState = ({passedProps, children}: AppProps) => {
+	const [ state, dispatch ] = useReducer(stateReducer, initialState(passedProps))
 
-	const handleState = (
+	const handleState = useCallback((
 		value: SchedulerState[keyof SchedulerState],
 		name: keyof SchedulerState
 	) => {
 		dispatch({type: "set", payload: {name, value}})
-	}
+	}, [ dispatch ])
 
-	const updateProps = (updatedProps: any) => {
+	const updateProps = useCallback((updatedProps: Partial<SchedulerProps>) => {
 		dispatch({type: "updateProps", payload: updatedProps})
-	}
+	}, [ dispatch ])
 
 	useEffect(() => {
 		if ( state.mounted ) {
-			updateProps({
-				events,
-				month,
-				week,
-				day,
-				fields,
-				locale,
-				direction,
-				loading,
-			})
+			updateProps(propsDiff(state, passedProps))
 		} else {
 			handleState(true, "mounted")
 		}
-		//eslint-disable-next-line
-	}, [
-		events,
-		month,
-		week,
-		day,
-		fields,
-		locale,
-		direction,
-		loading,
-	])
+	}, [ passedProps ])
+
+	useEffect(() => {
+		passedProps.onDateChange?.(state.selectedDate)
+	}, [ state.selectedDate, passedProps.onDateChange ])
 
 	const confirmEvent = (event: ProcessedEvent, action: EventActions) => {
 		let updatedEvents: ProcessedEvent[]
@@ -98,7 +83,7 @@ const AppState = ({initial, children}: AppProps) => {
 	}
 	const triggerLoading = (status: boolean) => {
 		// Trigger if not out-sourced by props
-		if ( typeof loading === "undefined" ) {
+		if ( typeof passedProps.loading === "undefined" ) {
 			dispatch({type: "triggerLoading", payload: status})
 		}
 	}
@@ -141,8 +126,10 @@ const AppState = ({initial, children}: AppProps) => {
 			end: addMinutes(startTime, diff),
 		}
 
-		if ( !onEventDrop || typeof onEventDrop !== "function" ) {
-			return confirmEvent(updatedEvent, "edit")
+		if ( passedProps.onEventDrop ) {
+			return passedProps.onEventDrop(startTime, updatedEvent, droppedEvent)
+		} else {
+			confirmEvent(updatedEvent, "edit")
 		}
 	}
 

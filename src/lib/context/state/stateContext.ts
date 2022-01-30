@@ -34,8 +34,7 @@ export interface stateContext extends SchedulerState {
 	): void;
 }
 
-export const defaultProps = {
-	height: 600,
+export const defaultProps: SchedulerProps = {
 	month: {
 		weekDays: [ 0, 1, 2, 3, 4, 5 ],
 		weekStartOn: 6,
@@ -57,25 +56,16 @@ export const defaultProps = {
 	view: "week",
 	selectedDate: new Date(),
 	events: [],
-	remoteEvents: undefined,
 	fields: [],
 	loading: undefined,
 	customEditor: undefined,
 	onConfirm: undefined,
 	onDelete: undefined,
 	viewerExtraComponent: undefined,
-	resources: [],
-	resourceFields: {
-		idField: "assignee",
-		textField: "text",
-		subTextField: "subtext",
-		avatarField: "avatar",
-		colorField: "color",
-	},
 	direction: "ltr",
 	dialogMaxWidth: "md",
 	locale: enUS,
-} as SchedulerProps
+}
 
 const StateContext = createContext<stateContext>({
 	...defaultProps,

@@ -6,7 +6,7 @@ import { Scheduler as SchedulerProps } from "./types"
 
 const Scheduler = (props: SchedulerProps) => {
 	return (
-		<AppState initial={props}>
+		<AppState passedProps={props}>
 			<SchedulerComponent/>
 		</AppState>
 	)

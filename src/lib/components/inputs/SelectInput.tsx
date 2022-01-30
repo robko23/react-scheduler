@@ -1,5 +1,4 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import React from "react"
 import {
 	Checkbox,
 	Chip,
@@ -12,7 +11,7 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 export type SelectOption = {
 	id: string | number;

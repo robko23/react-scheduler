@@ -1,10 +1,8 @@
-import { Paper } from "@mui/material"
 import { differenceInMinutes, set } from "date-fns"
-import { Fragment } from "react"
+import React, { Fragment, memo } from "react"
 import { BORDER_HEIGHT } from "../../helpers/constants"
 import { traversCrossingEvents } from "../../helpers/generals"
 import { ProcessedEvent } from "../../types"
-import React from "react"
 import EventItem from "./EventItem"
 
 interface TodayEventsProps {
@@ -16,7 +14,7 @@ interface TodayEventsProps {
 	direction: "rtl" | "ltr";
 }
 
-const TodayEvents = ({
+const TodayEvents = memo(({
 	todayEvents,
 	today,
 	startHour,
@@ -24,8 +22,6 @@ const TodayEvents = ({
 	minuteHeight,
 	direction,
 }: TodayEventsProps) => {
-	const crossingIds: Array<number | string> = []
-
 	return (
 		<Fragment>
 			{todayEvents.map((event, i) => {
@@ -49,34 +45,29 @@ const TodayEvents = ({
 				const top = topSpace + borderFactor
 
 				const crossingEvents = traversCrossingEvents(todayEvents, event)
-				const alreadyRendered = crossingEvents.filter((e) =>
-					crossingIds.includes(e.event_id)
-				)
-				crossingIds.push(event.event_id)
+				const event_index = crossingEvents.findIndex(e => event.event_id === e.event_id)
 
 				return (
-					<Paper
+					<EventItem
 						key={event.event_id}
-						className="rs__event__item"
-						elevation={2}
 						sx={{
+							position: "absolute",
+							zIndex: 1,
 							height,
 							top,
 							width: crossingEvents.length
-								? `${100 / (crossingEvents.length + 1)}%`
+								? `calc(${100 / (crossingEvents.length)}% - 5%)`
 								: "95%", //Leave some space to click cell
 							[direction === "rtl" ? "right" : "left"]:
-								alreadyRendered.length > 0
-									? `calc(100%/${alreadyRendered.length + 1})`
+								event_index > 0
+									? `calc(100%/${crossingEvents.length}*${event_index})`
 									: "",
 						}}
-					>
-						<EventItem event={event}/>
-					</Paper>
+						event={event}/>
 				)
 			})}
 		</Fragment>
 	)
-}
+})
 
 export default TodayEvents

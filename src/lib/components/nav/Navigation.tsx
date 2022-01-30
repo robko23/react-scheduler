@@ -1,16 +1,36 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import { Button, IconButton, MenuItem, MenuList, Popover, Toolbar, useMediaQuery, useTheme, } from "@mui/material"
-import { Fragment, memo, useState } from "react"
+import {
+	Button,
+	IconButton,
+	MenuItem,
+	MenuList,
+	Popover,
+	Toolbar as MuiToolbar,
+	useMediaQuery,
+	useTheme,
+} from "@mui/material"
+import { styled } from "@mui/material/styles"
+import React, { Fragment, memo, useState } from "react"
 import { useAppState } from "../../hooks/useAppState"
+import { LocalizationTexts } from "../../types"
 import { DayDateBtn } from "./DayDateBtn"
 import { MonthDateBtn } from "./MonthDateBtn"
 import { WeekDateBtn } from "./WeekDateBtn"
-import React from "react"
 
 export type View = "month" | "week" | "day";
 
+const Toolbar = styled(MuiToolbar, {
+	name: 'Toolbar'
+})({
+	display: "flex",
+	justifyContent: "space-between",
+	alignItems: "center",
+})
+
+const getViewText = (view: View, localizationTexts?: LocalizationTexts) => localizationTexts?.[view] ?? view
+
 const Navigation = memo(() => {
-	const {selectedDate, view, week, handleState, getViews} = useAppState()
+	const {selectedDate, view, week, handleState, getViews, localizationTexts} = useAppState()
 	const [ anchorEl, setAnchorEl ] = useState<Element | null>(null)
 	const theme = useTheme()
 	const isDesktop = useMediaQuery(theme.breakpoints.up("sm"))
@@ -44,17 +64,11 @@ const Navigation = memo(() => {
 	}
 
 	return (
-		<Toolbar
-			style={{
-				display: "flex",
-				justifyContent: "space-between",
-				alignItems: "center",
-			}}
-		>
+		<Toolbar className='Toolbar'>
 			<div>
 				{renderDateSelector()}
 				<Button onClick={() => handleState(new Date(), "selectedDate")}>
-					Today
+					{localizationTexts?.today ?? "Today"}
 				</Button>
 			</div>
 			<div>
@@ -70,7 +84,7 @@ const Navigation = memo(() => {
 								handleState(v, "view")
 							}}
 						>
-							{v}
+							{getViewText(v, localizationTexts)}
 						</Button>
 					))
 				) : (
@@ -108,7 +122,7 @@ const Navigation = memo(() => {
 											handleState(v, "view")
 										}}
 									>
-										{v}
+										{getViewText(v, localizationTexts)}
 									</MenuItem>
 								))}
 							</MenuList>

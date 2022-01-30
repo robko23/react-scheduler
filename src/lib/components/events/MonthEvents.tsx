@@ -3,15 +3,16 @@ import {
 	clamp,
 	compareDesc,
 	differenceInDays,
-	getDate,
+	endOfDay,
 	isAfter,
 	isBefore,
 	isSameDay,
 	isWithinInterval,
-	set,
+	startOfDay,
 } from "date-fns"
-import React, { Fragment, useEffect } from "react"
-import { END_OF_THE_DAY, MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT, START_OF_THE_DAY, } from "../../helpers/constants"
+import React, { Fragment, useEffect, useRef } from "react"
+import { MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT, } from "../../helpers/constants"
+import { useAppState } from "../../hooks/useAppState"
 import { ProcessedEvent } from "../../types"
 import EventItem from "./EventItem"
 
@@ -44,23 +45,29 @@ const MonthEvents = ({
 	weekStart,
 	cellSize
 }: MonthEventProps) => {
+	const {localizationTexts} = useAppState()
+	const moreRendered = useRef(false)
 
 	const MAX_EVENTS = Math.round(
 		(cellSize - MONTH_NUMBER_SIZE) / MULTI_DAY_EVENT_HEIGHT - 1
 	)
 
-	if(slots.length !== MAX_EVENTS || isSameDay(today, weekStart)) {
+	if ( slots.length !== MAX_EVENTS || isSameDay(today, weekStart) ) {
 		slots = new Array<ProcessedEvent>(MAX_EVENTS).fill(EMPTY_SLOT)
 	}
 
 	const todayEvents = events
 		.filter((e) =>
 			isWithinInterval(today, {
-				start: set(e.start, START_OF_THE_DAY),
-				end: set(e.end, END_OF_THE_DAY)
+				start: startOfDay(e.start),
+				end: endOfDay(e.end)
 			})
 		)
 		.sort((a, b) => compareDesc(a.end, b.end))
+
+	useEffect(() => {
+		moreRendered.current = false
+	}, [todayEvents])
 
 	return (
 		<Fragment>
@@ -81,16 +88,17 @@ const MonthEvents = ({
 
 				slots = slots.map(slot => {
 					// if event ended, clear the slot
-					if(isBefore(slot.end, today))
+					if ( isBefore(slot.end, today) ) {
 						return EMPTY_SLOT
+					}
 					return slot
 				})
 
 				// take a look at first free slot
 				// if no free slot is found, place text "n more..." after last slot
-				if(startsToday) {
+				if ( startsToday ) {
 					const firstFree = slots.findIndex(e => e.event_id === EMPTY_SLOT.event_id)
-					if(firstFree !== -1) {
+					if ( firstFree !== -1 ) {
 						index = firstFree
 						slots[firstFree] = event
 
@@ -102,41 +110,56 @@ const MonthEvents = ({
 
 				const topSpace = index * MULTI_DAY_EVENT_HEIGHT + MONTH_NUMBER_SIZE + 2
 
-				if(noSlotFree && startsToday)
+				if ( noSlotFree && startsToday && !moreRendered.current ) {
+					moreRendered.current = true
 					return <Typography
-						key={i}
+						key={event.title}
 						width="100%"
-						className="rs__multi_day rs__hover__op"
+						sx={{
+							position: "absolute",
+							zIndex: 1,
+							textOverflow: "ellipsis",
+							cursor: "pointer",
+							"&:hover": {
+								opacity: 0.7,
+								textDecoration: "underline",
+							},
+						}}
 						style={{top: topSpace, fontSize: 11}}
 						onClick={(e) => {
 							e.stopPropagation()
 							onViewMore(event.start)
 						}}
 					>
-						{`${Math.abs(todayEvents.length - MAX_EVENTS)} More...`}
+						{Math.abs(todayEvents.length - MAX_EVENTS)}&nbsp;
+						{localizationTexts?.more ?? "More..."}
 					</Typography>
+				}
+
+				if ( noSlotFree && startsToday && moreRendered.current ) {
+					return <React.Fragment key={event.title}/>
+				}
 
 				if ( startsToday ) {
 					return (
-						<div
+						<EventItem
 							key={event.title}
-							className="rs__multi_day"
-							style={{
-								top: topSpace,
+							sx={{
+								top: `${topSpace}px`,
 								width: `${100 * eventLength}%`,
+								position: "absolute",
+								zIndex: 1,
+								textOverflow: "ellipsis",
 							}}
-						>
-							<EventItem
-								event={event}
-								showdate={false}
-								multiday={differenceInDays(event.end, event.start) > 0}
-								hasPrev={fromPrevWeek}
-								hasNext={toNextWeek}
-							/>
-						</div>
+							event={event}
+							showdate={false}
+							multiday={differenceInDays(event.end, event.start) > 0}
+							hasPrev={fromPrevWeek}
+							hasNext={toNextWeek}
+						/>
 					)
 				} else {
-					return <></>
+					return <React.Fragment key={event.title}/>
 				}
 
 			})}

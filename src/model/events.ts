@@ -74,8 +74,14 @@ export const EVENTS = [
 		end: new Date("2022 1 31 09:20"),
 	},
 	{
-		event_id: 8,
+		event_id: 'short',
 		title: "Short",
+		start: new Date("2022 1 26 09:00"),
+		end: new Date("2022 1 26 10:20"),
+	},
+	{
+		event_id: 'test',
+		title: "test",
 		start: new Date("2022 1 26 09:00"),
 		end: new Date("2022 1 26 10:20"),
 	},

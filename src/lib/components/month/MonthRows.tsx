@@ -1,6 +1,5 @@
 import { addDays, format, setHours } from "date-fns"
-import React, { Fragment } from "react"
-import { MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT } from "../../helpers/constants"
+import React from "react"
 import { CellRenderedProps, DayHours } from "../../types"
 import { WeekDays } from "../../views/Month"
 import { MonthCell } from "./MonthCell"
@@ -20,11 +19,9 @@ export const MonthRows = ({
 	cellRenderer, eachWeekStart, endHour, startHour, weekDays, daysList, monthStart
 }: MonthRowProps) => {
 
-	const rows: JSX.Element[] = []
-
-	for ( const startDay of eachWeekStart ) {
+	const rows: JSX.Element[] = eachWeekStart.map(startDay => {
 		const endDay = addDays(startDay, weekDays[weekDays.length - 1])
-		const cells = weekDays.map((day) => {
+		return weekDays.map((day) => {
 			const today = addDays(startDay, day)
 			const start = new Date(
 				`${format(setHours(today, startHour), "yyyy MM dd hh:mm a")}`
@@ -34,6 +31,7 @@ export const MonthRows = ({
 			)
 
 			return <MonthCell
+				key={start.toString()}
 				daysList={daysList}
 				monthStart={monthStart}
 				end={end}
@@ -46,9 +44,7 @@ export const MonthRows = ({
 				cellRenderer={cellRenderer}/>
 
 		})
-
-		rows.push(<Fragment key={startDay.toString()}>{cells}</Fragment>)
-	}
+	}).flat(1)
 
 	return <>{rows}</>
 }
