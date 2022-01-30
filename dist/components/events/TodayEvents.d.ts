@@ -1,3 +1,4 @@
+import React from "react";
 import { ProcessedEvent } from "../../types";
 interface TodayEventsProps {
     todayEvents: ProcessedEvent[];
@@ -7,5 +8,5 @@ interface TodayEventsProps {
     minuteHeight: number;
     direction: "rtl" | "ltr";
 }
-declare const TodayEvents: ({ todayEvents, today, startHour, step, minuteHeight, direction, }: TodayEventsProps) => JSX.Element;
+declare const TodayEvents: React.MemoExoticComponent<({ todayEvents, today, startHour, step, minuteHeight, direction, }: TodayEventsProps) => JSX.Element>;
 export default TodayEvents;

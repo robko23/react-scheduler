@@ -6,7 +6,7 @@ declare type Props = {
     hourIndex: number;
     day: Date;
     startHour: number;
-    resourcedEvents: ProcessedEvent[];
+    events: ProcessedEvent[];
 };
 export declare const CellWithEvent: React.MemoExoticComponent<(props: Props) => ReactElement>;
 export {};

@@ -1,11 +1,11 @@
+import React from "react";
 import { ProcessedEvent } from "../../types";
 import { WeekCellProps } from "./EmptyCell";
-import React from "react";
 export declare type RowProps = Omit<WeekCellProps & {
     hourIndex: number;
     daysList: Date[];
     step: number;
-    resourcedEvents: ProcessedEvent[];
+    events: ProcessedEvent[];
     hour: Date;
     startHour: number;
 }, 'start' | 'end' | 'day'>;

@@ -1,5 +1,5 @@
-import { CellRenderedProps } from "../../types";
 import React from "react";
+import { CellRenderedProps } from "../../types";
 export declare type WeekCellProps = {
     cellRenderer?(props: CellRenderedProps): JSX.Element;
     day: Date;
