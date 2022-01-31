@@ -149,6 +149,7 @@ export interface SchedulerProps {
     localizationTexts?: LocalizationTexts;
     disableDrag?: boolean;
     onDateChange?: (date: Date) => void;
+    onViewChange?: (view: View) => void;
 }
 export declare type LocalizationTexts = Partial<{
     today: string;
