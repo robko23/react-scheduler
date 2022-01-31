@@ -214,11 +214,13 @@ export interface SchedulerProps {
 
 	onEventClick?: (event: ProcessedEvent) => void
 
-	localizationTexts?:LocalizationTexts,
+	localizationTexts?: LocalizationTexts,
 
 	disableDrag?: boolean
 
 	onDateChange?: (date: Date) => void
+
+	onViewChange?: (view: View) => void
 }
 
 export type LocalizationTexts = Partial<{

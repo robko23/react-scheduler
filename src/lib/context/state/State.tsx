@@ -60,6 +60,10 @@ const AppState = ({passedProps, children}: AppProps) => {
 		passedProps.onDateChange?.(state.selectedDate)
 	}, [ state.selectedDate, passedProps.onDateChange ])
 
+	useEffect(() => {
+		passedProps.onViewChange?.(state.view)
+	}, [ state.view, passedProps.onViewChange ])
+
 	const confirmEvent = (event: ProcessedEvent, action: EventActions) => {
 		let updatedEvents: ProcessedEvent[]
 		if ( action === "edit" ) {
