@@ -40,19 +40,6 @@ export const GridCell = styled(Box, {
 			background: alpha(theme.palette.primary.main, 0.1),
 		},
 	},
-	"& .rs__event__item": {
-		position: "absolute",
-		zIndex: 1,
-	},
-	"& .rs__multi_day": {
-		position: "absolute",
-		zIndex: 1,
-		textOverflow: "ellipsis",
-	},
-	"& .rs__block_col": {
-		display: "block",
-		position: "relative",
-	},
 	"& .rs__hover__op": {
 		cursor: "pointer",
 		"&:hover": {

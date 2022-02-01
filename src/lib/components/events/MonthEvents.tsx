@@ -12,6 +12,7 @@ import {
 } from "date-fns"
 import React, { Fragment, useEffect, useRef } from "react"
 import { MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT, } from "../../helpers/constants"
+import { clamp as mClamp } from '../../helpers/math'
 import { useAppState } from "../../hooks/useAppState"
 import { ProcessedEvent } from "../../types"
 import EventItem from "./EventItem"
@@ -48,9 +49,9 @@ const MonthEvents = ({
 	const {localizationTexts} = useAppState()
 	const moreRendered = useRef(false)
 
-	const MAX_EVENTS = Math.round(
+	const MAX_EVENTS = mClamp(Math.round(
 		(cellSize - MONTH_NUMBER_SIZE) / MULTI_DAY_EVENT_HEIGHT - 1
-	)
+	), 0, 100)
 
 	if ( slots.length !== MAX_EVENTS || isSameDay(today, weekStart) ) {
 		slots = new Array<ProcessedEvent>(MAX_EVENTS).fill(EMPTY_SLOT)

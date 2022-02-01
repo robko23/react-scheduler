@@ -14,63 +14,76 @@ const App = () => {
 
 	return (
 		<Scheduler
-			// dialogMaxWidth="sm"
-			// loading
-			view="month"
 			events={EVENTS}
+			disableEditor
+			disableViewer
+			// onDateChange={date => dispatch(setDate(date))}
+			// onViewChange={view => dispatch(setView(view))}
+			// selectedDate={selectedDate}
+			// view={selectedView}
 			locale={cs}
-			selectedDate={date}
-			onDateChange={setDate}
-			sx={{
-				height: '100%',
-			}}
-			week={{
-				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
-				weekStartOn: 1,
-				startHour: 8,
-				endHour: 15,
-				step: 30,
-				// cellRenderer: () => {
-				//   return <>week</>;
-				// },
-			}}
 			month={{
 				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
 				weekStartOn: 1,
 				startHour: 7,
 				endHour: 15,
 			}}
-			day={{
+			week={{
 				startHour: 6,
-				endHour: 16,
-				step: 30,
+				endHour: 18,
+				step: 60,
+				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+				weekStartOn: 1
 			}}
-			localizationTexts={{
-				today: 'Dnes',
-				month: 'Měsíc',
-				week: "Týden",
-				day: "Den",
-				more: "Další..."
-			}}
-			// disableDrag
-			disableViewer
-			disableEditor
-			onCellClick={(cellStart, cellEnd) => {
-				console.log(cellStart, cellEnd)
-			}}
-			onEventClick={event => console.log(event)}
-			onEventDrop={async (droppedOn, updatedEvent, originalEvent) => console.log(droppedOn, updatedEvent, originalEvent)}
-			// day={{
-			//   startHour: 8,
-			//   endHour: 18,
-			//   step: 20,
+
+			// dialogMaxWidth="sm"
+			// loading
+			// view="month"
+			// events={EVENTS}
+			// locale={cs}
+			// selectedDate={date}
+			// onDateChange={setDate}
+			// sx={{
+			// 	height: '100%',
 			// }}
-			// remoteEvents={async (query) => {
-			//   await new Promise((res, rej) => {
-			//     setTimeout(() => {
-			//       // setEvents(EVENTS);
-			//       res("");
-			//     }, 1000);
+			// week={{
+			// 	weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+			// 	weekStartOn: 1,
+			// 	startHour: 8,
+			// 	endHour: 15,
+			// 	step: 30,
+			// 	// cellRenderer: () => {
+			// 	//   return <>week</>;
+			// 	// },
+			// }}
+			// month={{
+			// 	weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
+			// 	weekStartOn: 1,
+			// 	startHour: 7,
+			// 	endHour: 15,
+			// }}
+			// day={{
+			// 	startHour: 6,
+			// 	endHour: 16,
+			// 	step: 30,
+			// }}
+			// localizationTexts={{
+			// 	today: 'Dnes',
+			// 	month: 'Měsíc',
+			// 	week: "Týden",
+			// 	day: "Den",
+			// 	more: "Další..."
+			// }}
+			// // disableDrag
+			// disableViewer
+			// disableEditor
+			// onCellClick={(cellStart, cellEnd) => {
+			// 	console.log(cellStart, cellEnd)
+			// }}
+			// onEventClick={event => console.log(event)}
+			// onEventDrop={async (droppedOn, updatedEvent, originalEvent) => console.log(droppedOn, updatedEvent,
+			// originalEvent)} day={{ startHour: 8, endHour: 18, step: 20, }} remoteEvents={async (query) => { await
+			// new Promise((res, rej) => { setTimeout(() => { // setEvents(EVENTS); res(""); }, 1000);
 			//   });
 			//   // return null;
 			//   // return EVENTS;

@@ -10,21 +10,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup NodeJS
-      uses: actions/setup-node@v1
-      with:
-        node-version: '16.x'
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
 
-    - name: Build
-      run: |
-        npm install
-        npx webpack
-        
-    - name: Commit build output
-      run: |
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npx webpack
+
+      - name: Set git credentials
+        run: |
           git config --global user.name 'Wordflow'
           git config --global user.email 'mailservice@robko.cz'
-          git commit -am "Wordflow - added build output [skip ci]"
+
+      - name: Upgrade version
+        run: yarn version --patch
+
+      - name: Commit build output
+        run: |
+          git commit --amend -am "$(git show-branch --no-name) [skip ci]"
           git push

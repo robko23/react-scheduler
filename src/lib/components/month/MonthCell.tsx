@@ -61,8 +61,11 @@ export const MonthCell = ({
 
 	return (
 		<GridCell
-			className='MonthCell'
+			className="MonthCell"
 			ref={ref}
+			sx={{
+				minHeight: MONTH_NUMBER_SIZE * 2,
+			}}
 			key={day.toString()}>
 			{/*region Cell render*/}
 			{cellRenderer ? (
