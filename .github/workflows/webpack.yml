@@ -34,4 +34,4 @@ jobs:
       - name: Commit build output
         run: |
           git commit --amend -am "$(git show-branch --no-name) [skip ci]"
-          git push
+          git push --tags
