@@ -8,6 +8,10 @@ interface CellProps {
 	children?: JSX.Element;
 }
 
+export type OnCellClickProps = {
+	ref: ForwardedRef<HTMLButtonElement>
+}
+
 const Cell = forwardRef(({
 	start,
 	end,
@@ -26,7 +30,7 @@ const Cell = forwardRef(({
 						start,
 						end
 					})
-				onCellClick?.(start, end)
+				onCellClick?.(start, end, {ref})
 			}}
 			onDragOver={(e) => {
 				e.currentTarget.style.backgroundColor = alpha(

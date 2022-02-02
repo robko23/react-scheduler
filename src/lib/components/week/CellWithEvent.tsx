@@ -43,7 +43,7 @@ export const CellWithEvent = memo((props: Props): ReactElement => {
 		if ( ref.current && props.hourIndex === 0 && todayEvents.length > 0 ) {
 			setMinuteHeight(ref.current?.getBoundingClientRect()?.height / props.step)
 		}
-	}, [ ref.current, todayEvents ])
+	}, [ todayEvents, props.hourIndex, props.step ])
 
 	return (
 		<GridCell today={isToday((props.day)) && view === 'week'}>

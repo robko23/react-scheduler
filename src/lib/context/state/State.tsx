@@ -13,7 +13,7 @@ interface AppProps {
 
 const propsDiff = (state: SchedulerState, updatedProps: Partial<SchedulerProps>): Partial<SchedulerProps> => {
 	const extractedProps: Partial<SchedulerProps> = {}
-	Object.keys(updatedProps).map((untyped_key) => {
+	Object.keys(updatedProps).forEach((untyped_key) => {
 		const key = untyped_key as keyof SchedulerProps
 		// @ts-ignore
 		extractedProps[key] = updatedProps[key]
@@ -54,15 +54,15 @@ const AppState = ({passedProps, children}: AppProps) => {
 		} else {
 			handleState(true, "mounted")
 		}
-	}, [ passedProps ])
+	}, [ passedProps ]) // eslint-disable-line
 
 	useEffect(() => {
 		passedProps.onDateChange?.(state.selectedDate)
-	}, [ state.selectedDate, passedProps.onDateChange ])
+	}, [ state.selectedDate, passedProps.onDateChange ]) // eslint-disable-line
 
 	useEffect(() => {
 		passedProps.onViewChange?.(state.view)
-	}, [ state.view, passedProps.onViewChange ])
+	}, [ state.view, passedProps.onViewChange ]) // eslint-disable-line
 
 	const confirmEvent = (event: ProcessedEvent, action: EventActions) => {
 		let updatedEvents: ProcessedEvent[]
