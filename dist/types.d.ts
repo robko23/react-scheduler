@@ -1,6 +1,7 @@
 import { DialogProps, GridSize, SxProps, Theme } from "@mui/material";
 import { Locale } from "date-fns";
 import { ForwardedRef } from "react";
+import { OnCellClickProps } from "./components/common/Cell";
 import { SelectOption } from "./components/inputs/SelectInput";
 import { RenderNavigationProps, View } from "./components/nav/Navigation";
 import { DayProps } from "./views/Day";
@@ -144,7 +145,7 @@ export interface SchedulerProps {
      * @param cellStart what is the beginning of the cell
      * @param cellEnd what is the end of the cell
      */
-    onCellClick?: (cellStart: Date, cellEnd: Date) => void;
+    onCellClick?: (cellStart: Date, cellEnd: Date, additionalProps: OnCellClickProps) => void;
     onEventClick?: (event: ProcessedEvent) => void;
     localizationTexts?: LocalizationTexts;
     disableDrag?: boolean;
