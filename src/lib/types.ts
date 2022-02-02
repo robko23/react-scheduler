@@ -2,7 +2,7 @@ import { DialogProps, GridSize, SxProps, Theme } from "@mui/material"
 import { Locale } from "date-fns"
 import { ForwardedRef } from "react"
 import { SelectOption } from "./components/inputs/SelectInput"
-import { View } from "./components/nav/Navigation"
+import { RenderNavigationProps, View } from "./components/nav/Navigation"
 import { DayProps } from "./views/Day"
 import { StateItem } from "./views/Editor"
 import { MonthProps } from "./views/Month"
@@ -221,6 +221,8 @@ export interface SchedulerProps {
 	onDateChange?: (date: Date) => void
 
 	onViewChange?: (view: View) => void
+
+	renderNavigation?: (props: RenderNavigationProps) => JSX.Element
 }
 
 export type LocalizationTexts = Partial<{

@@ -27,10 +27,17 @@ const Toolbar = styled(MuiToolbar, {
 	alignItems: "center",
 })
 
+export type RenderNavigationProps = {
+	dateSelector: JSX.Element,
+	todayButton: JSX.Element,
+	viewSelector: JSX.Element,
+	isDesktop: boolean
+}
+
 const getViewText = (view: View, localizationTexts?: LocalizationTexts) => localizationTexts?.[view] ?? view
 
 const Navigation = memo(() => {
-	const {selectedDate, view, week, handleState, getViews, localizationTexts} = useAppState()
+	const {selectedDate, view, week, handleState, getViews, localizationTexts, renderNavigation} = useAppState()
 	const [ anchorEl, setAnchorEl ] = useState<Element | null>(null)
 	const theme = useTheme()
 	const isDesktop = useMediaQuery(theme.breakpoints.up("sm"))
@@ -59,77 +66,100 @@ const Navigation = memo(() => {
 					<DayDateBtn selectedDate={selectedDate} onChange={handleState}/>
 				)
 			default:
-				return ""
+				return <></>
 		}
 	}
 
+	const dateSelector = renderDateSelector()
+	const todayButton = (
+		<Button onClick={() => handleState(new Date(), "selectedDate")}>
+			{localizationTexts?.today ?? "Today"}
+		</Button>
+	)
+
+	let viewSelector = <>{views.map((v) => (
+		<Button
+			key={v}
+			color={v === view ? "primary" : "inherit"}
+			onClick={() => handleState(v, "view")}
+			onDragOver={(e) => {
+				e.preventDefault()
+				handleState(v, "view")
+			}}
+		>
+			{getViewText(v, localizationTexts)}
+		</Button>
+	))}</>
+
+	if ( !isDesktop ) {
+		viewSelector = (
+			<Fragment>
+				<IconButton
+					style={{padding: 5}}
+					onClick={(e) => {
+						toggleMoreMenu(e.currentTarget)
+					}}
+				>
+					<MoreVertIcon/>
+				</IconButton>
+				<Popover
+					open={Boolean(anchorEl)}
+					anchorEl={anchorEl}
+					onClose={(e) => {
+						toggleMoreMenu()
+					}}
+					anchorOrigin={{
+						vertical: "center",
+						horizontal: "center",
+					}}
+					transformOrigin={{
+						vertical: "top",
+						horizontal: "center",
+					}}
+				>
+					<MenuList autoFocusItem={!!anchorEl} disablePadding>
+						{views.map((v) => (
+							<MenuItem
+								key={v}
+								selected={v === view}
+								onClick={() => {
+									toggleMoreMenu()
+									handleState(v, "view")
+								}}
+							>
+								{getViewText(v, localizationTexts)}
+							</MenuItem>
+						))}
+					</MenuList>
+				</Popover>
+			</Fragment>
+		)
+	}
+
+	if ( views.length === 0 ) {
+		viewSelector = <></>
+	}
+
+	let content = (
+		<>
+			<div>
+				{dateSelector}
+				{todayButton}
+			</div>
+			<div>
+				{viewSelector}
+			</div>
+		</>
+	)
+
+	if(renderNavigation)
+		content = renderNavigation({
+			dateSelector, todayButton, viewSelector, isDesktop
+		})
+
 	return (
-		<Toolbar className='Toolbar'>
-			<div>
-				{renderDateSelector()}
-				<Button onClick={() => handleState(new Date(), "selectedDate")}>
-					{localizationTexts?.today ?? "Today"}
-				</Button>
-			</div>
-			<div>
-				{views.length > 1 &&
-				(isDesktop ? (
-					views.map((v) => (
-						<Button
-							key={v}
-							color={v === view ? "primary" : "inherit"}
-							onClick={() => handleState(v, "view")}
-							onDragOver={(e) => {
-								e.preventDefault()
-								handleState(v, "view")
-							}}
-						>
-							{getViewText(v, localizationTexts)}
-						</Button>
-					))
-				) : (
-					<Fragment>
-						<IconButton
-							style={{padding: 5}}
-							onClick={(e) => {
-								toggleMoreMenu(e.currentTarget)
-							}}
-						>
-							<MoreVertIcon/>
-						</IconButton>
-						<Popover
-							open={Boolean(anchorEl)}
-							anchorEl={anchorEl}
-							onClose={(e) => {
-								toggleMoreMenu()
-							}}
-							anchorOrigin={{
-								vertical: "center",
-								horizontal: "center",
-							}}
-							transformOrigin={{
-								vertical: "top",
-								horizontal: "center",
-							}}
-						>
-							<MenuList autoFocusItem={!!anchorEl} disablePadding>
-								{views.map((v) => (
-									<MenuItem
-										key={v}
-										selected={v === view}
-										onClick={() => {
-											toggleMoreMenu()
-											handleState(v, "view")
-										}}
-									>
-										{getViewText(v, localizationTexts)}
-									</MenuItem>
-								))}
-							</MenuList>
-						</Popover>
-					</Fragment>
-				))}
-			</div>
+		<Toolbar className="Toolbar">
+			{content}
 		</Toolbar>
 	)
 })

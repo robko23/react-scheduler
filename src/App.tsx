@@ -1,4 +1,5 @@
 // import arSA from "date-fns/locale/ar-SA";
+import { Box, Typography } from "@mui/material"
 import { cs } from 'date-fns/locale'
 import React, { useEffect, useState } from "react"
 import { Scheduler } from "./lib/Scheduler"
@@ -35,6 +36,18 @@ const App = () => {
 				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
 				weekStartOn: 1
 			}}
+			renderNavigation={({viewSelector, dateSelector, todayButton}) => (
+				<>
+					<Box sx={{display: 'flex', flexDirection: 'row'}}>
+						<Typography>Test</Typography>
+						{dateSelector}
+						{todayButton}
+					</Box>
+					<Box sx={{display: 'flex', flexDirection: 'row'}}>
+						{viewSelector}
+					</Box>
+				</>
+			)}
 
 			// dialogMaxWidth="sm"
 			// loading
