@@ -2,11 +2,11 @@ import { differenceInMinutes, set } from "date-fns"
 import React, { Fragment, memo } from "react"
 import { BORDER_HEIGHT } from "../../helpers/constants"
 import { traversCrossingEvents } from "../../helpers/generals"
-import { ProcessedEvent } from "../../types"
+import { CalendarEvent } from "../../types"
 import EventItem from "./EventItem"
 
 interface TodayEventsProps {
-	todayEvents: ProcessedEvent[];
+	todayEvents: CalendarEvent[];
 	today: Date;
 	startHour: number;
 	step: number;
@@ -45,11 +45,11 @@ const TodayEvents = memo(({
 				const top = topSpace + borderFactor
 
 				const crossingEvents = traversCrossingEvents(todayEvents, event)
-				const event_index = crossingEvents.findIndex(e => event.event_id === e.event_id)
+				const event_index = crossingEvents.findIndex(e => event.id === e.id)
 
 				return (
 					<EventItem
-						key={event.event_id}
+						key={event.id}
 						sx={{
 							position: "absolute",
 							zIndex: 1,

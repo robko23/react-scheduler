@@ -1,6 +1,6 @@
+/// <reference types="react" />
 interface DayDateBtnProps {
     selectedDate: Date;
-    onChange(value: Date, key: "selectedDate"): void;
 }
-declare const DayDateBtn: ({ selectedDate, onChange }: DayDateBtnProps) => JSX.Element;
+declare const DayDateBtn: ({ selectedDate }: DayDateBtnProps) => JSX.Element;
 export { DayDateBtn };

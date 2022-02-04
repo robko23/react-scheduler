@@ -1,3 +1,4 @@
+/// <reference types="react" />
 interface MonthDateBtnProps {
     selectedDate: Date;
     onChange(value: Date, key: "selectedDate"): void;

@@ -2,8 +2,8 @@ import { Avatar, Typography, useTheme } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import { addDays, endOfDay, format, isSameMonth, isToday } from "date-fns"
 import React, { Fragment, useLayoutEffect, useRef, useState } from "react"
-import { MONTH_NUMBER_SIZE } from "../../helpers/constants"
-import { useAppState } from "../../hooks/useAppState"
+import { MONTH_NUMBER_SIZE, TODAY } from "../../helpers/constants"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { GridCell } from "../../styles/styles"
 import { CellRenderedProps } from "../../types"
 import { WeekDays } from "../../views/Month"
@@ -46,12 +46,18 @@ export const MonthCell = ({
 	const ref = useRef<HTMLDivElement | null>(null)
 	const [ cellSize, setCellSize ] = useState<number | null>(null)
 	const {
-		events,
-		handleGotoDay,
-		triggerDialog,
-		selectedDate
-	} = useAppState()
+		events = [],
+		selectedDate = TODAY,
+		onCellClick,
+		onViewChange,
+		onDateChange
+	} = useCalendarProps()
 	const theme = useTheme()
+
+	const handleGotoDay = (day: Date) => {
+		onViewChange?.('day')
+		onDateChange?.(day)
+	}
 
 	useLayoutEffect(() => {
 		if ( ref.current?.getBoundingClientRect()?.height ) {
@@ -73,17 +79,15 @@ export const MonthCell = ({
 						day: selectedDate,
 						start,
 						end,
-						onClick: () =>
-							triggerDialog(true, {
-								start,
-								end,
-							}),
+						onClick: (event) =>
+							onCellClick?.(start, end, event)
 					})
 				) :
 				(
 					<Cell
 						start={start}
 						end={end}
+						onCellClick={e => onCellClick?.(start, end, e)}
 					/>
 				)
 			}

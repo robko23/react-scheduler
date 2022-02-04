@@ -1,7 +1,10 @@
 import { addMinutes, isWithinInterval } from "date-fns"
 import { View } from "../components/nav/Navigation"
-import { FieldProps, ProcessedEvent, SchedulerProps, } from "../types"
-import { StateEvent } from "../views/Editor"
+import { CalendarEvent, SchedulerProps, } from "../types"
+import { DayProps } from "../views/Day"
+import { MonthProps } from "../views/Month"
+import { WeekProps } from "../views/Week"
+
 
 export const getOneView = (state: Partial<SchedulerProps>): View => {
 	if ( state.month ) {
@@ -14,37 +17,24 @@ export const getOneView = (state: Partial<SchedulerProps>): View => {
 	throw new Error("No views were selected")
 }
 
-export const getAvailableViews = (state: SchedulerProps) => {
+export const getAvailableViews = (month?: MonthProps, week?: WeekProps, day?: DayProps) => {
 	let views: View[] = []
-	if ( state.month ) {
+	if ( month ) {
 		views.push("month")
 	}
-	if ( state.week ) {
+	if ( week ) {
 		views.push("week")
 	}
-	if ( state.day ) {
+	if ( day ) {
 		views.push("day")
 	}
 	return views
 }
 
-export const arraytizeFieldVal = (
-	field: FieldProps,
-	val: any,
-	event?: StateEvent
-) => {
-	const arrytize =
-		field.config?.multiple &&
-		!Array.isArray(event?.[field.name] || field.default)
-	const value = arrytize ? (val ? [ val ] : []) : val
-	const validity = arrytize ? value.length : value
-	return {value, validity}
-}
-
 export const traversCrossingEvents = (
-	todayEvents: ProcessedEvent[],
-	event: ProcessedEvent
-): ProcessedEvent[] => {
+	todayEvents: CalendarEvent[],
+	event: CalendarEvent
+): CalendarEvent[] => {
 	return todayEvents.filter(
 		(e) =>
 			// e.event_id !== event.event_id &&

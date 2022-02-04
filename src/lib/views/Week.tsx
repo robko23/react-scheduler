@@ -18,10 +18,10 @@ import React, { useCallback } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import EventItem from "../components/events/EventItem"
 import { RowsWithTime } from "../components/week/RowsWithTime"
-import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { useAppState } from "../hooks/useAppState"
+import { MULTI_DAY_EVENT_HEIGHT, TODAY } from "../helpers/constants"
+import { useCalendarProps } from "../hooks/useCalendarProps"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
-import { CellRenderedProps, DayHours, ProcessedEvent, } from "../types"
+import { CalendarEvent, CellRenderedProps, DayHours, } from "../types"
 import { WeekDays } from "./Month"
 
 export interface WeekProps {
@@ -40,10 +40,11 @@ const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT
 const Week = () => {
 	const {
 		week,
-		selectedDate,
-		events,
-		handleGotoDay,
-	} = useAppState()
+		selectedDate = TODAY,
+		events = [],
+		onViewChange,
+		onDateChange
+	} = useCalendarProps()
 
 	const {weekStartOn, weekDays, startHour, endHour, step, cellRenderer} = week!
 
@@ -68,9 +69,14 @@ const Week = () => {
 		{step: step}
 	)
 
+	const handleGotoDay = (day: Date) => {
+		onDateChange?.(day)
+		onViewChange?.('day')
+	}
+
 
 	// renders all events in current week in first visible day
-	const renderMultiDayEvents = useCallback((events: ProcessedEvent[]) => {
+	const renderMultiDayEvents = useCallback((events: CalendarEvent[]) => {
 		return events.map((event, index) => {
 			// if event is longer than visible range
 			const hasPrev = isBefore(startOfDay(event.start), visibleWeekStart)
@@ -89,7 +95,7 @@ const Week = () => {
 
 			return (
 				<EventItem
-					key={event.event_id}
+					key={event.id}
 					event={event}
 					hasPrev={hasPrev}
 					hasNext={hasNext}

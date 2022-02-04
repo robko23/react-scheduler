@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material"
 import { format } from "date-fns"
 import React, { Fragment, memo } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { GridTimeCell } from "../../styles/styles"
 import { Row, RowProps } from "./Row"
 
@@ -10,7 +10,7 @@ type Props = Omit<RowProps & {
 }, 'hour' | 'hourIndex'>
 
 export const RowsWithTime = memo((props: Props) => {
-	const {locale} = useAppState()
+	const {locale} = useCalendarProps()
 	const hours = props.hours.map((hour, hourIndex) => (
 		<Fragment key={hour.toISOString()}>
 			{/* Time cell */}

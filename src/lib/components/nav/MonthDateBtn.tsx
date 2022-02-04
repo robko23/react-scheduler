@@ -1,36 +1,39 @@
 import DatePicker from "@mui/lab/DatePicker"
 import { Button } from "@mui/material"
-import { format, getMonth, setMonth } from "date-fns"
+import { addMonths, format, getMonth } from "date-fns"
 import React, { useState } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
 
 interface MonthDateBtnProps {
 	selectedDate: Date;
-
-	onChange(value: Date, key: "selectedDate"): void;
 }
 
-const MonthDateBtn = ({selectedDate, onChange}: MonthDateBtnProps) => {
-	const {locale, localizationTexts} = useAppState()
+const MonthDateBtn = ({selectedDate}: MonthDateBtnProps) => {
+	const {
+		locale,
+		localizationTexts,
+		onDateChange
+	} = useCalendarProps()
 	const [ open, setOpen ] = useState(false)
-	const currentMonth = getMonth(selectedDate)
 
 	const toggleDialog = () => setOpen(!open)
 
 	const handleChange = (e: Date | null, k?: string) => {
-		onChange(e || new Date(), "selectedDate")
+		if ( e ) {
+			onDateChange?.(e)
+		}
 	}
 
 	const handlePrev = () => {
-		const prevMonth = currentMonth - 1
-		onChange(setMonth(selectedDate, prevMonth), "selectedDate")
+		const prevMonth = addMonths(selectedDate, -1)
+		onDateChange?.(prevMonth)
 	}
 
 	const handleNext = () => {
-		const nextMonth = currentMonth + 1
-		onChange(setMonth(selectedDate, nextMonth), "selectedDate")
+		const nextMonth = addMonths(selectedDate, 1)
+		onDateChange?.(nextMonth)
 	}
 
 	return (

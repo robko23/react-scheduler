@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { WeekProps } from "../../views/Week";
 interface WeekDateBtnProps {
     selectedDate: Date;

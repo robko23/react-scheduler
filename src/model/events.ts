@@ -1,4 +1,6 @@
-export const EVENTS = [
+import { CalendarEvent } from "../lib/types"
+
+export const EVENTS: CalendarEvent[] = [
 	// {
 	//   event_id: 1,
 	//   title: "Event 1",
@@ -43,44 +45,44 @@ export const EVENTS = [
 	//   admin_id: 2,
 	// },
 	{
-		event_id: 10,
+		id: 10,
 		title: "Multi-week",
 		start: new Date("2022 1 20 09:00"),
 		end: new Date("2022 2 1 09:20"),
 	},
 	{
-		event_id: 11,
+		id: 11,
 		title: "Testing event",
 		start: new Date("2022 1 25 09:00"),
 		end: new Date("2022 1 26 09:20"),
 	},
 	{
-		event_id: 12,
+		id: 12,
 		title: "2 day event",
 		start: new Date("2022 1 24 09:00"),
 		end: new Date("2022 1 25 09:20"),
 	},
 	{
-		event_id: 7,
+		id: 7,
 		title: "Multi-day",
 		start: new Date("2022 1 25 09:00"),
 		end: new Date("2022 1 28 09:20"),
 		disabled: true
 	},
 	{
-		event_id: 9,
+		id: 9,
 		title: "Multi-day offset",
 		start: new Date("2022 1 26 09:00"),
 		end: new Date("2022 1 31 09:20"),
 	},
 	{
-		event_id: 'short',
+		id: 'short',
 		title: "Short",
 		start: new Date("2022 1 26 09:00"),
 		end: new Date("2022 1 26 10:20"),
 	},
 	{
-		event_id: 'test',
+		id: 'test',
 		title: "test",
 		start: new Date("2022 1 26 09:00"),
 		end: new Date("2022 1 26 10:20"),

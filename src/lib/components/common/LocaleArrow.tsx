@@ -2,7 +2,7 @@ import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded"
 import { IconButton, Tooltip } from "@mui/material"
 import React, { MouseEvent } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 
 interface LocaleArrowProps {
 	type: "prev" | "next";
@@ -13,7 +13,7 @@ interface LocaleArrowProps {
 }
 
 const LocaleArrow = ({type, onClick, tooltip}: LocaleArrowProps) => {
-	const {direction} = useAppState()
+	const {direction} = useCalendarProps()
 
 	let Arrow = NavigateNextRoundedIcon
 	if ( type === "prev" ) {

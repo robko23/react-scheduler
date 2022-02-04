@@ -2,33 +2,36 @@ import DatePicker from "@mui/lab/DatePicker"
 import { Button } from "@mui/material"
 import { addDays, format } from "date-fns"
 import React, { useState } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
 
 interface DayDateBtnProps {
 	selectedDate: Date;
-
-	onChange(value: Date, key: "selectedDate"): void;
 }
 
-const DayDateBtn = ({selectedDate, onChange}: DayDateBtnProps) => {
-	const {locale, localizationTexts} = useAppState()
+const DayDateBtn = ({selectedDate}: DayDateBtnProps) => {
+	const {
+		locale,
+		localizationTexts,
+		onDateChange
+	} = useCalendarProps()
 	const [ open, setOpen ] = useState(false)
 	const toggleDialog = () => setOpen(!open)
 
 	const handleChange = (e: Date | null, k?: string) => {
-		onChange(e || new Date(), "selectedDate")
+		if(e)
+			onDateChange?.(e)
 	}
 
 	const handlePrev = () => {
 		const prevDay = addDays(selectedDate, -1)
-		onChange(prevDay, "selectedDate")
+		onDateChange?.(prevDay)
 	}
 
 	const handleNext = () => {
 		const nexDay = addDays(selectedDate, 1)
-		onChange(nexDay, "selectedDate")
+		onDateChange?.(nexDay)
 	}
 
 	return (

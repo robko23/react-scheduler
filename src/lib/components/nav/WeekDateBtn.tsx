@@ -1,8 +1,9 @@
 import DatePicker from "@mui/lab/DatePicker"
 import { Button } from "@mui/material"
-import { addDays, endOfWeek, format, startOfWeek } from "date-fns"
+import { addDays, addWeeks, endOfWeek, format, startOfWeek } from "date-fns"
 import React, { useState } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { TODAY } from "../../helpers/constants"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { WeekProps } from "../../views/Week"
 import { LocaleArrow } from "../common/LocaleArrow"
 import DateProvider from "../hoc/DateProvider"
@@ -10,17 +11,14 @@ import DateProvider from "../hoc/DateProvider"
 interface WeekDateBtnProps {
 	selectedDate: Date;
 
-	onChange(value: Date, key: "selectedDate"): void;
-
 	weekProps: WeekProps;
 }
 
 const WeekDateBtn = ({
 	selectedDate,
-	onChange,
 	weekProps,
 }: WeekDateBtnProps) => {
-	const {locale, localizationTexts} = useAppState()
+	const {locale, localizationTexts, onDateChange} = useCalendarProps()
 	const [ open, setOpen ] = useState(false)
 	const {weekStartOn} = weekProps
 	const weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
@@ -29,17 +27,19 @@ const WeekDateBtn = ({
 	const toggleDialog = () => setOpen(!open)
 
 	const handleChange = (e: Date | null, k?: string) => {
-		onChange(e || new Date(), "selectedDate")
+		if(e)
+			onDateChange?.(e)
 	}
 
 	const handlePrev = () => {
-		const ladtDayPrevWeek = addDays(weekStart, -1)
-		onChange(ladtDayPrevWeek, "selectedDate")
+		const lastDayPrevWeek = addDays(weekStart, -1)
+		onDateChange?.(lastDayPrevWeek)
 	}
 	const handleNext = () => {
 		const firstDayNextWeek = addDays(weekEnd, 1)
-		onChange(firstDayNextWeek, "selectedDate")
+		onDateChange?.(firstDayNextWeek)
 	}
+
 	return (
 		<>
 			<LocaleArrow type="prev" onClick={handlePrev}

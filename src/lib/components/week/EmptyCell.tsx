@@ -1,5 +1,5 @@
 import React, { ForwardedRef, forwardRef, memo } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { CellRenderedProps } from "../../types"
 import { Cell } from "../common/Cell"
 
@@ -11,24 +11,21 @@ export type WeekCellProps = {
 }
 
 export const EmptyCell = memo(forwardRef((props: WeekCellProps, ref: ForwardedRef<HTMLButtonElement>) => {
-	const {triggerDialog} = useAppState()
+	const {onCellClick} = useCalendarProps()
 	if ( props.cellRenderer ) {
 		return props.cellRenderer({
 			day: props.day,
 			start: props.start,
 			end: props.end,
 			ref: ref,
-			onClick: () =>
-				triggerDialog(true, {
-					start: props.start,
-					end: props.end,
-				}),
+			onClick: (event) =>
+				onCellClick?.(props.start, props.end, event)
 		})
 	}
 
 	return <Cell
 		start={props.start}
 		end={props.end}
-		ref={ref}
+		onCellClick={event => onCellClick?.(props.start, props.end, event)}
 	/>
 }))

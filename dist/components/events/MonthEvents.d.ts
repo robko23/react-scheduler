@@ -1,6 +1,7 @@
-import { ProcessedEvent } from "../../types";
+/// <reference types="react" />
+import { CalendarEvent } from "../../types";
 interface MonthEventProps {
-    events: ProcessedEvent[];
+    events: CalendarEvent[];
     today: Date;
     daysList: Date[];
     weekStart: Date;

@@ -1,11 +1,11 @@
 import React from "react";
-import { ProcessedEvent } from "../../types";
+import { CalendarEvent } from "../../types";
 import { WeekCellProps } from "./EmptyCell";
 export declare type RowProps = Omit<WeekCellProps & {
     hourIndex: number;
     daysList: Date[];
     step: number;
-    events: ProcessedEvent[];
+    events: CalendarEvent[];
     hour: Date;
     startHour: number;
 }, 'start' | 'end' | 'day'>;

@@ -13,12 +13,12 @@ import {
 import React, { Fragment, useEffect, useRef } from "react"
 import { MONTH_NUMBER_SIZE, MULTI_DAY_EVENT_HEIGHT, } from "../../helpers/constants"
 import { clamp as mClamp } from '../../helpers/math'
-import { useAppState } from "../../hooks/useAppState"
-import { ProcessedEvent } from "../../types"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
+import { CalendarEvent } from "../../types"
 import EventItem from "./EventItem"
 
 interface MonthEventProps {
-	events: ProcessedEvent[];
+	events: CalendarEvent[];
 	today: Date;
 	daysList: Date[];
 	weekStart: Date,
@@ -29,14 +29,14 @@ interface MonthEventProps {
 	cellSize: number
 }
 
-const EMPTY_SLOT: ProcessedEvent = {
+const EMPTY_SLOT: CalendarEvent = {
 	end: new Date(),
-	event_id: 'null',
+	id: 'null',
 	start: new Date(),
 	title: ''
 }
 
-let slots: ProcessedEvent[] = []
+let slots: CalendarEvent[] = []
 
 const MonthEvents = ({
 	events,
@@ -46,7 +46,7 @@ const MonthEvents = ({
 	weekStart,
 	cellSize
 }: MonthEventProps) => {
-	const {localizationTexts} = useAppState()
+	const {localizationTexts} = useCalendarProps()
 	const moreRendered = useRef(false)
 
 	const MAX_EVENTS = mClamp(Math.round(
@@ -54,7 +54,7 @@ const MonthEvents = ({
 	), 0, 100)
 
 	if ( slots.length !== MAX_EVENTS || isSameDay(today, weekStart) ) {
-		slots = new Array<ProcessedEvent>(MAX_EVENTS).fill(EMPTY_SLOT)
+		slots = new Array<CalendarEvent>(MAX_EVENTS).fill(EMPTY_SLOT)
 	}
 
 	const todayEvents = events
@@ -98,7 +98,7 @@ const MonthEvents = ({
 				// take a look at first free slot
 				// if no free slot is found, place text "n more..." after last slot
 				if ( startsToday ) {
-					const firstFree = slots.findIndex(e => e.event_id === EMPTY_SLOT.event_id)
+					const firstFree = slots.findIndex(e => e.id === EMPTY_SLOT.id)
 					if ( firstFree !== -1 ) {
 						index = firstFree
 						slots[firstFree] = event

@@ -2,7 +2,8 @@ import { Typography } from "@mui/material"
 import { addDays, eachWeekOfInterval, endOfMonth, format, startOfMonth, } from "date-fns"
 import React from "react"
 import { MonthRows } from "../components/month/MonthRows"
-import { useAppState } from "../hooks/useAppState"
+import { TODAY } from "../helpers/constants"
+import { useCalendarProps } from "../hooks/useCalendarProps"
 import { GridHeaderCell, TableGrid } from "../styles/styles"
 import { CellRenderedProps, DayHours } from "../types"
 
@@ -20,9 +21,9 @@ export interface MonthProps {
 const Month = () => {
 	const {
 		month,
-		selectedDate,
+		selectedDate = TODAY,
 		locale
-	} = useAppState()
+	} = useCalendarProps()
 
 	const {weekStartOn, weekDays, startHour, endHour, cellRenderer} = month!
 	const monthStart = startOfMonth(selectedDate)

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 interface TodayTypoProps {
     date: Date;
     onClick?(day: Date): void;

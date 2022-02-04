@@ -14,10 +14,10 @@ import React from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import EventItem from "../components/events/EventItem"
 import { RowsWithTime } from "../components/week/RowsWithTime"
-import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants"
-import { useAppState } from "../hooks/useAppState"
+import { MULTI_DAY_EVENT_HEIGHT, TODAY } from "../helpers/constants"
+import { useCalendarProps } from "../hooks/useCalendarProps"
 import { GridCell, GridHeaderCell, TableGrid } from "../styles/styles"
-import { CellRenderedProps, DayHours, ProcessedEvent, } from "../types"
+import { CalendarEvent, CellRenderedProps, DayHours, } from "../types"
 
 export interface DayProps {
 	startHour: DayHours;
@@ -26,13 +26,12 @@ export interface DayProps {
 
 	cellRenderer?(props: CellRenderedProps): JSX.Element;
 }
-
 const Day = () => {
 	const {
 		day,
-		selectedDate,
-		events,
-	} = useAppState()
+		selectedDate = TODAY,
+		events = [],
+	} = useCalendarProps()
 	const {startHour, endHour, step} = day!
 	const START_TIME = setMinutes(setHours(selectedDate, startHour), 0)
 	const END_TIME = setMinutes(setHours(selectedDate, endHour), 0)
@@ -47,7 +46,7 @@ const Day = () => {
 
 	const todayEvents = events.sort((b, a) => a.end.getTime() - b.end.getTime())
 
-	const renderMultiDayEvents = (events: ProcessedEvent[]) => {
+	const renderMultiDayEvents = (events: CalendarEvent[]) => {
 		const multiDays = events.filter(
 			(e) =>
 				differenceInDays(e.end, e.start) > 0 &&
@@ -74,7 +73,7 @@ const Day = () => {
 							multiday
 							hasPrev={hasPrev}
 							hasNext={hasNext}
-							key={event.event_id}
+							key={event.id}
 							sx={{
 								position: "absolute",
 								zIndex: 1,

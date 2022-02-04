@@ -1,12 +1,9 @@
-import React, { ForwardedRef } from "react";
+import React from "react";
 interface CellProps {
     start: Date;
     end: Date;
     children?: JSX.Element;
+    onCellClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
-export declare type OnCellClickProps = {
-    ref: ForwardedRef<HTMLButtonElement>;
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
-};
-declare const Cell: React.ForwardRefExoticComponent<CellProps & React.RefAttributes<HTMLButtonElement>>;
+declare const Cell: ({ start, end, children, onCellClick }: CellProps) => JSX.Element;
 export { Cell };

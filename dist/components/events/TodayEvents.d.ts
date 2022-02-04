@@ -1,7 +1,7 @@
 import React from "react";
-import { ProcessedEvent } from "../../types";
+import { CalendarEvent } from "../../types";
 interface TodayEventsProps {
-    todayEvents: ProcessedEvent[];
+    todayEvents: CalendarEvent[];
     today: Date;
     startHour: number;
     step: number;

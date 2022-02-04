@@ -1,5 +1,5 @@
 import React, { memo } from "react"
-import { ProcessedEvent } from "../../types"
+import { CalendarEvent } from "../../types"
 import { CellWithEvent } from "./CellWithEvent"
 import { WeekCellProps } from "./EmptyCell"
 
@@ -7,7 +7,7 @@ export type RowProps = Omit<WeekCellProps & {
 	hourIndex: number,
 	daysList: Date[],
 	step: number,
-	events: ProcessedEvent[],
+	events: CalendarEvent[],
 	hour: Date,
 	startHour: number
 }, 'start' | 'end' | 'day'>

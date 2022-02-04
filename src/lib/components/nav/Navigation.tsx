@@ -11,7 +11,9 @@ import {
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import React, { Fragment, memo, useState } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { TODAY } from "../../helpers/constants"
+import { getAvailableViews } from "../../helpers/generals"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { LocalizationTexts } from "../../types"
 import { DayDateBtn } from "./DayDateBtn"
 import { MonthDateBtn } from "./MonthDateBtn"
@@ -37,11 +39,11 @@ export type RenderNavigationProps = {
 const getViewText = (view: View, localizationTexts?: LocalizationTexts) => localizationTexts?.[view] ?? view
 
 const Navigation = memo(() => {
-	const {selectedDate, view, week, handleState, getViews, localizationTexts, renderNavigation} = useAppState()
+	const {selectedDate = TODAY, view, week, localizationTexts, renderNavigation, day, month, onDateChange, onViewChange} = useCalendarProps()
 	const [ anchorEl, setAnchorEl ] = useState<Element | null>(null)
 	const theme = useTheme()
 	const isDesktop = useMediaQuery(theme.breakpoints.up("sm"))
-	const views = getViews()
+	const views = getAvailableViews(month, week, day)
 
 	const toggleMoreMenu = (el?: Element) => {
 		setAnchorEl(el || null)
@@ -51,19 +53,18 @@ const Navigation = memo(() => {
 		switch ( view ) {
 			case "month":
 				return (
-					<MonthDateBtn selectedDate={selectedDate} onChange={handleState}/>
+					<MonthDateBtn selectedDate={selectedDate}/>
 				)
 			case "week":
 				return (
 					<WeekDateBtn
 						selectedDate={selectedDate}
-						onChange={handleState}
 						weekProps={week!}
 					/>
 				)
 			case "day":
 				return (
-					<DayDateBtn selectedDate={selectedDate} onChange={handleState}/>
+					<DayDateBtn selectedDate={selectedDate}/>
 				)
 			default:
 				return <></>
@@ -72,7 +73,7 @@ const Navigation = memo(() => {
 
 	const dateSelector = renderDateSelector()
 	const todayButton = (
-		<Button onClick={() => handleState(new Date(), "selectedDate")}>
+		<Button onClick={() => onDateChange?.(new Date())}>
 			{localizationTexts?.today ?? "Today"}
 		</Button>
 	)
@@ -81,10 +82,10 @@ const Navigation = memo(() => {
 		<Button
 			key={v}
 			color={v === view ? "primary" : "inherit"}
-			onClick={() => handleState(v, "view")}
+			onClick={() => onViewChange?.(v)}
 			onDragOver={(e) => {
 				e.preventDefault()
-				handleState(v, "view")
+				onViewChange?.(v)
 			}}
 		>
 			{getViewText(v, localizationTexts)}
@@ -124,7 +125,7 @@ const Navigation = memo(() => {
 								selected={v === view}
 								onClick={() => {
 									toggleMoreMenu()
-									handleState(v, "view")
+									onViewChange?.(v)
 								}}
 							>
 								{getViewText(v, localizationTexts)}
@@ -152,10 +153,11 @@ const Navigation = memo(() => {
 		</>
 	)
 
-	if(renderNavigation)
+	if ( renderNavigation ) {
 		content = renderNavigation({
 			dateSelector, todayButton, viewSelector, isDesktop
 		})
+	}
 
 	return (
 		<Toolbar className="Toolbar">

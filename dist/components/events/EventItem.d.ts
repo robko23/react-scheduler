@@ -1,8 +1,8 @@
 import { SxProps, Theme } from "@mui/material";
 import { ReactElement } from "react";
-import { ProcessedEvent } from "../../types";
+import { CalendarEvent } from "../../types";
 interface EventItemProps {
-    event: ProcessedEvent;
+    event: CalendarEvent;
     multiday: boolean;
     hasPrev?: boolean;
     hasNext?: boolean;

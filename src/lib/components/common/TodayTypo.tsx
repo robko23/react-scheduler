@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material"
 import { format, isToday } from "date-fns"
 import React from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 
 interface TodayTypoProps {
 	date: Date;
@@ -10,7 +10,7 @@ interface TodayTypoProps {
 }
 
 const TodayTypo = ({date, onClick}: TodayTypoProps) => {
-	const {locale} = useAppState()
+	const {locale} = useCalendarProps()
 	return (
 		<div>
 			<Typography

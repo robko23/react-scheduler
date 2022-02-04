@@ -1,8 +1,8 @@
 import { addMinutes, differenceInDays, getHours, getMinutes, isSameDay, isToday, set } from "date-fns"
 import React, { memo, ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
-import { useAppState } from "../../hooks/useAppState"
+import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { GridCell } from "../../styles/styles"
-import { ProcessedEvent } from "../../types"
+import { CalendarEvent } from "../../types"
 import TodayEvents from "../events/TodayEvents"
 import { EmptyCell } from "./EmptyCell"
 
@@ -12,11 +12,11 @@ type Props = {
 	hourIndex: number,
 	day: Date,
 	startHour: number,
-	events: ProcessedEvent[]
+	events: CalendarEvent[]
 }
 
 export const CellWithEvent = memo((props: Props): ReactElement => {
-	const {direction, view} = useAppState()
+	const {direction, view} = useCalendarProps()
 	const ref = useRef<HTMLButtonElement | null>(null)
 	const [ minuteHeight, setMinuteHeight ] = useState<number | null>(null)
 
@@ -56,7 +56,7 @@ export const CellWithEvent = memo((props: Props): ReactElement => {
                 minuteHeight={minuteHeight}
                 startHour={props.startHour}
                 step={props.step}
-                direction={direction}/>
+                direction={direction ?? "ltr"}/>
 			}
 
 			<EmptyCell

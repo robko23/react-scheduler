@@ -1,11 +1,8 @@
-import { DialogProps, GridSize, SxProps, Theme } from "@mui/material"
+import { SxProps, Theme } from "@mui/material"
 import { Locale } from "date-fns"
-import { ForwardedRef } from "react"
-import { OnCellClickProps } from "./components/common/Cell"
-import { SelectOption } from "./components/inputs/SelectInput"
+import React, { ForwardedRef } from "react"
 import { RenderNavigationProps, View } from "./components/nav/Navigation"
 import { DayProps } from "./views/Day"
-import { StateItem } from "./views/Editor"
 import { MonthProps } from "./views/Month"
 import { WeekProps } from "./views/Week"
 
@@ -41,98 +38,19 @@ export interface CellRenderedProps {
 	end: Date;
 	ref?: ForwardedRef<HTMLButtonElement>
 
-	onClick(): void;
+	onClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void;
 }
 
-interface CalendarEvent {
-	event_id: number | string;
+export type CalendarEvent = {
+	id: number | string;
 	title: string;
 	start: Date;
 	end: Date;
-	// description?: string;
+	color?: string,
+	disabled?: boolean
 }
 
-export type InputTypes = "input" | "date" | "select" | "hidden";
-
-export interface FieldInputProps {
-	/** Available to all InputTypes */
-	label?: string;
-	/** Available to all InputTypes */
-	placeholder?: string;
-	/** Available to all InputTypes
-	 * @defaul false
-	 */
-	required?: boolean;
-	/** Available to all InputTypes
-	 * @default "outline"
-	 */
-	variant?: "standard" | "filled" | "outlined";
-	/** Available to all InputTypes */
-	disabled?: boolean;
-
-	/** Available when @input="text" ONLY - Minimum length */
-	min?: number;
-	/** Available when @input="text" ONLY - Maximum length */
-	max?: number;
-	/** Available when @input="text" ONLY - Apply email Regex */
-	email?: boolean;
-	/** Available when @input="text" ONLY - Only numbers(int/float) allowed */
-	decimal?: boolean;
-	/** Available when @input="text" ONLY - Allow Multiline input. Use @rows property to set initial rows height */
-	multiline?: boolean;
-	/** Available when @input="text" ONLY - initial rows height*/
-	rows?: number;
-	/** Available when @input="date" ONLY
-	 * @default "datetime"
-	 */
-	type?: "date" | "datetime";
-	/** Available when @input="date" ONLY. Picker types
-	 * @default "inline"
-	 */
-	modalVariant?: "dialog" | "inline" | "static";
-
-	/** Available when @input="select" ONLY - Multi-Select input style.
-	 * if you use "default" property with this, make sure your "default" property is an instance of Array
-	 */
-	multiple?: "chips" | "default";
-	/** Available when @input="select" ONLY - display loading spinner instead of expand arrow */
-	loading?: boolean;
-	/** Available when @input="select" ONLY - Custom error message */
-	errMsg?: string;
-
-	/* Used for Grid alignment in a single row md | sm | xs */
-	md?: GridSize;
-	/* Used for Grid alignment in a single row md | sm | xs */
-	sm?: GridSize;
-	/* Used for Grid alignment in a single row md | sm | xs */
-	xs?: GridSize;
-}
-
-export interface FieldProps {
-	name: string;
-	type: InputTypes;
-	/** Required for type="select" */
-	options?: Array<SelectOption>;
-	default?: string | number | Date | any;
-	config?: FieldInputProps;
-}
-
-export type ProcessedEvent = CalendarEvent & Record<string, any>;
-export type EventActions = "create" | "edit";
-
-export interface SchedulerHelpers {
-	state: Record<string, StateItem>;
-
-	close(): void;
-
-	loading(status: boolean): void;
-
-	edited?: ProcessedEvent;
-
-	onConfirm(event: ProcessedEvent, action: EventActions): void;
-}
-
-export interface SchedulerProps {
+export type SchedulerProps = Partial<{
 	/**
 	 * Custom styling
 	 */
@@ -141,47 +59,23 @@ export interface SchedulerProps {
 	/** Initial view to load */
 	view: View;
 	/**Month view settings */
-	month?: MonthProps;
+	month: MonthProps;
 	/**Week view settings */
-	week?: WeekProps;
+	week: WeekProps;
 	/**Day view settings */
-	day?: DayProps;
+	day: DayProps;
 	/**Initial date selected */
 	selectedDate: Date;
 	/**Events to display */
-	events: ProcessedEvent[];
+	events: CalendarEvent[];
 
-	/**Custom additional fields with it's settings */
-	fields: FieldProps[];
 	/**Table loading state */
-	loading?: boolean;
+	loading: boolean;
 
-	/**Async function triggered when add/edit event */
-	onConfirm?(
-		event: ProcessedEvent,
-		action: EventActions
-	): Promise<ProcessedEvent>;
-
-	/**Async function triggered when delete event */
-	onDelete?(deletedId: string | number): Promise<string | number | void>;
-
-	/**Override editor modal */
-	customEditor?(scheduler: SchedulerHelpers): JSX.Element;
-
-	/**Additional component in event viewer popper */
-	viewerExtraComponent?:
-		| JSX.Element
-		| ((fields: FieldProps[], event: ProcessedEvent) => JSX.Element);
-
-	/**Override viewer title component */
-	viewerTitleComponent?(event: ProcessedEvent): JSX.Element;
 
 	/**Direction of table */
 	direction: "rtl" | "ltr";
-	/**Edito dialog maxWith
-	 * @default "md"
-	 */
-	dialogMaxWidth: DialogProps["maxWidth"];
+
 	/**
 	 * date-fns Locale object
 	 */
@@ -190,41 +84,31 @@ export interface SchedulerProps {
 	/**
 	 * Triggerd when event is dropped on time slot.
 	 */
-	onEventDrop?(
+	onEventDrop(
 		droppedOn: Date,
-		updatedEvent: ProcessedEvent,
-		originalEvent: ProcessedEvent
-	): Promise<ProcessedEvent | void>;
-
-	/**
-	 * Disables build in editor
-	 */
-	disableEditor?: boolean,
-
-	/**
-	 * Disables build in viewer
-	 */
-	disableViewer?: boolean
+		updatedEvent: CalendarEvent,
+		originalEvent: CalendarEvent
+	): Promise<CalendarEvent | void>;
 
 	/**
 	 * Fires whenever user clicks on empty cell
 	 * @param cellStart what is the beginning of the cell
 	 * @param cellEnd what is the end of the cell
 	 */
-	onCellClick?: (cellStart: Date, cellEnd: Date, additionalProps: OnCellClickProps) => void
+	onCellClick: (cellStart: Date, cellEnd: Date, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 
-	onEventClick?: (event: ProcessedEvent) => void
+	onEventClick: (calendarEvent: CalendarEvent, event: React.MouseEvent<HTMLButtonElement>) => void
 
-	localizationTexts?: LocalizationTexts,
+	localizationTexts: LocalizationTexts,
 
-	disableDrag?: boolean
+	disableDrag: boolean
 
-	onDateChange?: (date: Date) => void
+	onDateChange: (date: Date) => void
 
-	onViewChange?: (view: View) => void
+	onViewChange: (view: View) => void
 
-	renderNavigation?: (props: RenderNavigationProps) => JSX.Element
-}
+	renderNavigation: (props: RenderNavigationProps) => JSX.Element
+}>
 
 export type LocalizationTexts = Partial<{
 	today: string,

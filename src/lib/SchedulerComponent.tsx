@@ -2,9 +2,8 @@ import { Box, CircularProgress, Typography } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import React, { useMemo } from "react"
 import { Navigation } from "./components/nav/Navigation"
-import { useAppState } from "./hooks/useAppState"
+import { useCalendarProps } from "./hooks/useCalendarProps"
 import { Day } from "./views/Day"
-import Editor from "./views/Editor"
 import { Month } from "./views/Month"
 import { Week } from "./views/Week"
 
@@ -42,7 +41,7 @@ const Table = styled(Box, {
 }))
 
 const SchedulerComponent = () => {
-	const {loading, view, dialog, sx, disableEditor} = useAppState()
+	const {loading, view, sx} = useCalendarProps()
 
 	const Views = useMemo(() => {
 		switch ( view ) {
@@ -60,20 +59,19 @@ const SchedulerComponent = () => {
 	return (
 		<Calendar sx={sx}>
 			{loading &&
-            <LoadingOverlay className='LoadingOverlay'>
-                <CircularProgress size={50}/>
-                <Typography
-                    sx={{pt: 10}}
-                    align="center">Loading...</Typography>
-			</LoadingOverlay>
+                <LoadingOverlay className="LoadingOverlay">
+                    <CircularProgress size={50}/>
+                    <Typography
+                        sx={{pt: 10}}
+                        align="center">Loading...</Typography>
+                </LoadingOverlay>
 			}
 
 			<Navigation/>
 			{/*Table*/}
-			<Table className='Table'>
+			<Table className="Table">
 				{Views}
 			</Table>
-			{!disableEditor && dialog && <Editor/>}
 		</Calendar>
 	)
 }
