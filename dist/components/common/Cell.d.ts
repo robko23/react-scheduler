@@ -6,6 +6,7 @@ interface CellProps {
 }
 export declare type OnCellClickProps = {
     ref: ForwardedRef<HTMLButtonElement>;
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
 };
 declare const Cell: React.ForwardRefExoticComponent<CellProps & React.RefAttributes<HTMLButtonElement>>;
 export { Cell };
