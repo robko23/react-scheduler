@@ -9,7 +9,8 @@ interface CellProps {
 }
 
 export type OnCellClickProps = {
-	ref: ForwardedRef<HTMLButtonElement>
+	ref: ForwardedRef<HTMLButtonElement>,
+	event: React.MouseEvent<HTMLButtonElement, MouseEvent>
 }
 
 const Cell = forwardRef(({
@@ -24,13 +25,13 @@ const Cell = forwardRef(({
 		<Button
 			ref={ref}
 			fullWidth
-			onClick={() => {
+			onClick={(event) => {
 				if(!disableEditor)
 					triggerDialog(true, {
 						start,
 						end
 					})
-				onCellClick?.(start, end, {ref})
+				onCellClick?.(start, end, {ref, event})
 			}}
 			onDragOver={(e) => {
 				e.currentTarget.style.backgroundColor = alpha(
