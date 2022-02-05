@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { CalendarEvent } from "../../types";
 interface MonthEventProps {
     events: CalendarEvent[];

@@ -1,7 +1,10 @@
 import { View } from "../components/nav/Navigation";
 import { CalendarEvent, SchedulerProps } from "../types";
+import { DayProps } from "../views/Day";
+import { MonthProps } from "../views/Month";
+import { WeekProps } from "../views/Week";
 export declare const getOneView: (state: Partial<SchedulerProps>) => View;
-export declare const getAvailableViews: (state: SchedulerProps) => View[];
+export declare const getAvailableViews: (month?: MonthProps | undefined, week?: WeekProps | undefined, day?: DayProps | undefined) => View[];
 export declare const traversCrossingEvents: (todayEvents: CalendarEvent[], event: CalendarEvent) => CalendarEvent[];
 export declare const calcMinuteHeight: (cellHeight: number, step: number) => number;
 export declare const calcCellHeight: (tableHeight: number, hoursLength: number) => number;

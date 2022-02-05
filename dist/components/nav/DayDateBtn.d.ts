@@ -1,4 +1,3 @@
-/// <reference types="react" />
 interface DayDateBtnProps {
     selectedDate: Date;
 }

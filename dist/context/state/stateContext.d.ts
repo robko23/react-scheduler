@@ -10,7 +10,7 @@ declare const StateContext: import("react").Context<Partial<{
     selectedDate: Date;
     events: import("../../types").CalendarEvent[];
     loading: boolean;
-    direction: "ltr" | "rtl";
+    direction: "rtl" | "ltr";
     locale: Locale;
     onEventDrop(droppedOn: Date, updatedEvent: import("../../types").CalendarEvent, originalEvent: import("../../types").CalendarEvent): Promise<void | import("../../types").CalendarEvent>;
     onCellClick: (cellStart: Date, cellEnd: Date, event: import("react").MouseEvent<HTMLButtonElement, MouseEvent>) => void;
