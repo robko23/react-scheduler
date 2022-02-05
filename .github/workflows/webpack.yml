@@ -43,8 +43,8 @@ jobs:
 
       - name: Commit build output
         run: |
-          git commit -am "$PACKAGE_VERSION [skip ci]"
-          git tag $PACKAGE_VERSION
+          git commit -am "v$PACKAGE_VERSION [skip ci]"
+          git tag v$PACKAGE_VERSION
 
       - name: Push commit and tag
         run: |
