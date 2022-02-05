@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 2
 
       - name: Setup NodeJS
         uses: actions/setup-node@v1
@@ -25,18 +28,25 @@ jobs:
 
       - name: Set git credentials
         run: |
-          git config --global user.name 'Wordflow'
+          git config --global user.name 'Workflow'
           git config --global user.email 'mailservice@robko.cz'
 
       - name: Upgrade version
-        run: yarn version --patch
+        run: yarn version --patch --no-git-tag-version
+
+      - name: Set version variable
+        # source (edited) https://gist.github.com/DarrenN/8c6a5b969481725a4413?permalink_comment_id=3194363#gistcomment-3194363
+        run: |
+          echo "PACKAGE_VERSION<<EOF" >> $GITHUB_ENV
+          sed -nr 's/^\s*\"version": "([0-9]{1,}\.[0-9]{1,}.*)",$/\1/p' package.json >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: Commit build output
         run: |
-          git commit --amend -am "$(git show-branch --no-name) [skip ci]"
-          git push --tags
+          git commit -am "$PACKAGE_VERSION [skip ci]"
+          git tag $PACKAGE_VERSION
 
       - name: Push commit and tag
         run: |
-          git push
-          git push --tags          
+          git push origin
+          git push origin --tags
