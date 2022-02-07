@@ -60,7 +60,11 @@
     "peerDependencies": {
         "@mui/icons-material": ">=5.0.0",
         "@mui/lab": ">=5.0.0-alpha",
-        "@mui/material": ">=5.0.0"
+        "@mui/material": ">=5.0.0",
+        "date-fns": "^2.21.2",
+        "react-use": "^17.3.2",
+        "lodash.throttle": "^4.1.1",
+        "use-resize-observer": "^8.0.0"
     },
     "eslintConfig": {
         "extends": [
