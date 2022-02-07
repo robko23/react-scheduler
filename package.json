@@ -1,6 +1,6 @@
 {
     "name": "@robko23/react-scheduler",
-    "version": "4.0.2",
+    "version": "4.0.3",
     "description": "React scheduler component based on Material-UI & date-fns",
     "main": "./dist/Scheduler.js",
     "//types": "./dist/index.d.ts",
@@ -62,8 +62,8 @@
         "@mui/lab": ">=5.0.0-alpha",
         "@mui/material": ">=5.0.0",
         "date-fns": "^2.21.2",
-        "react-use": "^17.3.2",
         "lodash.throttle": "^4.1.1",
+        "react-use": "^17.3.2",
         "use-resize-observer": "^8.0.0"
     },
     "eslintConfig": {
