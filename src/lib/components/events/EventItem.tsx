@@ -22,7 +22,7 @@ const EventItemRoot = styled(Paper, {
 	width: "100%",
 	display: "block",
 	background: color || theme.palette.primary.main,
-	color: theme.palette.primary.contrastText,
+	color: theme.palette.getContrastText(color || theme.palette.primary.main),
 	overflow: "hidden",
 }))
 

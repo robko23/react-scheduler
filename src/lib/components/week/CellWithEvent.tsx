@@ -1,6 +1,8 @@
 import { addMinutes, differenceInDays, getHours, getMinutes, isSameDay, isToday, set } from "date-fns"
-import React, { memo, ReactElement, useLayoutEffect, useMemo, useRef, useState } from "react"
+import React, { memo, ReactElement, useMemo } from "react"
+import useResizeObserver from "use-resize-observer"
 import { useCalendarProps } from "../../hooks/useCalendarProps"
+import { useThrottledResizeObserver } from "../../hooks/useThrottledObserver"
 import { GridCell } from "../../styles/styles"
 import { CalendarEvent } from "../../types"
 import TodayEvents from "../events/TodayEvents"
@@ -17,8 +19,8 @@ type Props = {
 
 export const CellWithEvent = memo((props: Props): ReactElement => {
 	const {direction, view} = useCalendarProps()
-	const ref = useRef<HTMLButtonElement | null>(null)
-	const [ minuteHeight, setMinuteHeight ] = useState<number | null>(null)
+	const {ref, height = 1} = useThrottledResizeObserver<HTMLButtonElement>(100)
+	const minuteHeight = height / props.step
 
 	const todayEvents = useMemo(
 		() => props.events
@@ -39,14 +41,8 @@ export const CellWithEvent = memo((props: Props): ReactElement => {
 
 	const end = addMinutes(start, props.step)
 
-	useLayoutEffect(() => {
-		if ( ref.current && props.hourIndex === 0 && todayEvents.length > 0 ) {
-			setMinuteHeight(ref.current?.getBoundingClientRect()?.height / props.step)
-		}
-	}, [ todayEvents, props.hourIndex, props.step ])
-
 	return (
-		<GridCell today={isToday((props.day)) && view === 'week'}>
+		<GridCell today={isToday((props.day)) && view === 'week'} ref={ref}>
 
 			{/* Events of each day - run once on the top hour column */}
 			{props.hourIndex === 0 && minuteHeight &&
@@ -64,7 +60,7 @@ export const CellWithEvent = memo((props: Props): ReactElement => {
 				start={start}
 				day={props.day}
 				end={end}
-				ref={ref}
+				// ref={ref}
 			/>
 		</GridCell>
 	)

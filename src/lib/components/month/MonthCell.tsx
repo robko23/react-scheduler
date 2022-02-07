@@ -4,6 +4,7 @@ import { addDays, endOfDay, format, isSameMonth, isToday } from "date-fns"
 import React, { Fragment, useLayoutEffect, useRef, useState } from "react"
 import { MONTH_NUMBER_SIZE, TODAY } from "../../helpers/constants"
 import { useCalendarProps } from "../../hooks/useCalendarProps"
+import { useThrottledResizeObserver } from "../../hooks/useThrottledObserver"
 import { GridCell } from "../../styles/styles"
 import { CellRenderedProps } from "../../types"
 import { WeekDays } from "../../views/Month"
@@ -43,8 +44,7 @@ export const MonthCell = ({
 	cellRenderer, daysList, monthStart,
 	end, start, day, endDay, startDay, today, weekDays
 }: MonthCellProps) => {
-	const ref = useRef<HTMLDivElement | null>(null)
-	const [ cellSize, setCellSize ] = useState<number | null>(null)
+	const {ref, height = 1} = useThrottledResizeObserver<HTMLButtonElement>(100)
 	const {
 		events = [],
 		selectedDate = TODAY,
@@ -58,12 +58,6 @@ export const MonthCell = ({
 		onViewChange?.('day')
 		onDateChange?.(day)
 	}
-
-	useLayoutEffect(() => {
-		if ( ref.current?.getBoundingClientRect()?.height ) {
-			setCellSize(ref.current?.getBoundingClientRect()?.height)
-		}
-	}, [])
 
 	return (
 		<GridCell
@@ -109,7 +103,7 @@ export const MonthCell = ({
 					</Typography>
 				</MonthCellDayNumber>
 
-				{cellSize &&
+				{height > 1 &&
                 <MonthEvents
                     events={events}
                     today={today}
@@ -117,7 +111,7 @@ export const MonthCell = ({
                     onViewMore={handleGotoDay}
                     weekStart={addDays(startDay, weekDays[0])}
                     weekEnd={endOfDay(endDay)}
-                    cellSize={cellSize}
+                    cellSize={height}
                 />
 				}
 			</Fragment>

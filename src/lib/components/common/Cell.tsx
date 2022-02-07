@@ -1,6 +1,6 @@
 import { alpha, Button, useTheme } from "@mui/material"
 import { addMinutes, differenceInMinutes, isEqual } from "date-fns"
-import React from "react"
+import React, { ForwardedRef, forwardRef, memo } from "react"
 import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { CalendarEvent } from "../../types"
 
@@ -11,12 +11,7 @@ interface CellProps {
 	onCellClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
-const Cell = ({
-	start,
-	end,
-	children,
-	onCellClick
-}: CellProps,) => {
+const Cell = memo(((props: CellProps) => {
 	const {onEventDrop, events} = useCalendarProps()
 	const theme = useTheme()
 
@@ -54,7 +49,7 @@ const Cell = ({
 	return (
 		<Button
 			fullWidth
-			onClick={onCellClick}
+			onClick={props.onCellClick}
 			onDragOver={(e) => {
 				e.currentTarget.style.backgroundColor = alpha(
 					theme.palette.secondary.main,
@@ -74,12 +69,12 @@ const Cell = ({
 			onDrop={(e) => {
 				e.currentTarget.style.backgroundColor = ""
 				const eventId = e.dataTransfer.getData("text")
-				onDrop(eventId, start)
+				onDrop(eventId, props.start)
 			}}
 		>
-			{children}
+			{props.children}
 		</Button>
 	)
-}
+}))
 
 export { Cell }

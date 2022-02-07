@@ -10,14 +10,13 @@ export type WeekCellProps = {
 	end: Date
 }
 
-export const EmptyCell = memo(forwardRef((props: WeekCellProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const EmptyCell = memo((props: WeekCellProps) => {
 	const {onCellClick} = useCalendarProps()
 	if ( props.cellRenderer ) {
 		return props.cellRenderer({
 			day: props.day,
 			start: props.start,
 			end: props.end,
-			ref: ref,
 			onClick: (event) =>
 				onCellClick?.(props.start, props.end, event)
 		})
@@ -28,4 +27,4 @@ export const EmptyCell = memo(forwardRef((props: WeekCellProps, ref: ForwardedRe
 		end={props.end}
 		onCellClick={event => onCellClick?.(props.start, props.end, event)}
 	/>
-}))
+})
