@@ -6,4 +6,4 @@ export declare type WeekCellProps = {
     start: Date;
     end: Date;
 };
-export declare const EmptyCell: React.MemoExoticComponent<React.ForwardRefExoticComponent<WeekCellProps & React.RefAttributes<HTMLButtonElement>>>;
+export declare const EmptyCell: React.MemoExoticComponent<(props: WeekCellProps) => JSX.Element>;

@@ -5,5 +5,5 @@ interface CellProps {
     children?: JSX.Element;
     onCellClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
-declare const Cell: ({ start, end, children, onCellClick }: CellProps) => JSX.Element;
+declare const Cell: React.MemoExoticComponent<(props: CellProps) => JSX.Element>;
 export { Cell };
