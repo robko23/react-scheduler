@@ -12,33 +12,39 @@ type Props = Omit<EventRowProps & {
 
 export const RowsWithTime = memo((props: Props) => {
 	const {locale} = useCalendarProps()
-	const hours = props.hours.map((hour, hourIndex) => (
-		<Fragment key={hour.toISOString()}>
-			{/* Time cell */}
-			<GridTimeCell>
-				<Typography variant="caption">
-					{format(hour, "hh:mm a", {locale: locale})}
-				</Typography>
-			</GridTimeCell>
 
-			{hourIndex === 0 ?
-				<EventRow
-					hour={hour}
-					startHour={props.startHour}
-					step={props.step}
-					cellRenderer={props.cellRenderer}
-					daysList={props.daysList}
+	let hours: JSX.Element[] = []
+	for ( let hourIndex = 0; hourIndex < props.hours.length; hourIndex++ ) {
+		// using classic for loop for performance
+		const hour = props.hours[hourIndex]
+		hours.push((
+			<Fragment key={hour.toISOString()}>
+				{/* Time cell */}
+				<GridTimeCell>
+					<Typography variant="caption">
+						{format(hour, "hh:mm a", {locale: locale})}
+					</Typography>
+				</GridTimeCell>
+
+				{hourIndex === 0 ?
+					<EventRow
+						hour={hour}
+						startHour={props.startHour}
+						step={props.step}
+						cellRenderer={props.cellRenderer}
+						daysList={props.daysList}
 					/>
-				:
-				<Row
-					step={props.step}
-					cellRenderer={props.cellRenderer}
-					daysList={props.daysList}
-					hour={hour}
-				/>
-			}
-		</Fragment>
-	))
+					:
+					<Row
+						step={props.step}
+						cellRenderer={props.cellRenderer}
+						daysList={props.daysList}
+						hour={hour}
+					/>
+				}
+			</Fragment>
+		))
+	}
 
 	return <>{hours}</>
 })

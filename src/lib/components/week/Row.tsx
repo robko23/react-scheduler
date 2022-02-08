@@ -13,14 +13,18 @@ export type RowProps = Omit<WeekCellProps & {
 
 export const Row = memo((props: RowProps) => {
 	const {view} = useCalendarProps()
-	const days = props.daysList.map((day) => {
+
+	let days: JSX.Element[] = []
+	// using classic for loop for performance
+	for ( let dayIndex = 0; dayIndex < props.daysList.length; dayIndex++ ) {
+		const day = props.daysList[dayIndex]
 		const start = set(day, {
 			hours: getHours(props.hour),
 			minutes: getMinutes(props.hour)
 		})
 		const end = addMinutes(start, props.step)
 
-		return (
+		days.push((
 			<GridCell today={isToday((day)) && view === 'week'}>
 				<EmptyCell
 					{...props}
@@ -29,9 +33,7 @@ export const Row = memo((props: RowProps) => {
 					end={end}
 				/>
 			</GridCell>
-		)
-	})
-
-	//	<CellWithEvent {...props} day={day} key={day.toISOString()}/>
+		))
+	}
 	return <>{days}</>
 })

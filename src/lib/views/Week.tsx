@@ -14,7 +14,7 @@ import {
 	startOfDay,
 	startOfWeek,
 } from "date-fns"
-import React, { useCallback } from "react"
+import React, { useCallback, useMemo } from "react"
 import TodayTypo from "../components/common/TodayTypo"
 import EventItem from "../components/events/EventItem"
 import { RowsWithTime } from "../components/week/RowsWithTime"
@@ -49,25 +49,26 @@ const Week = () => {
 	const {weekStartOn, weekDays, startHour, endHour, step, cellRenderer} = week!
 
 	//actual start of week
-	const weekStart = startOfWeek(selectedDate, {weekStartsOn: weekStartOn})
+	const weekStart = useMemo(
+		() => startOfWeek(selectedDate, {weekStartsOn: weekStartOn}), [ selectedDate, weekStartOn ])
 	// visible days
-	const daysList = weekDays.map((d) => addDays(weekStart, d))
+	const daysList = useMemo(() => weekDays.map((d) => addDays(weekStart, d)), [ weekStart ])
 	// visible first day
-	const visibleWeekStart = startOfDay(daysList[0])
+	const visibleWeekStart = useMemo(() => startOfDay(daysList[0]), [ daysList ])
 	// visible last day
-	const visibleWeekEnd = endOfDay(daysList[daysList.length - 1])
+	const visibleWeekEnd = useMemo(() => endOfDay(daysList[daysList.length - 1]), [ daysList ])
 	// configured start hour
-	const START_TIME = setMinutes(setHours(selectedDate, startHour), 0)
+	const START_TIME = useMemo(() => setMinutes(setHours(selectedDate, startHour), 0), [ selectedDate, startHour ])
 	// configured end hour
-	const END_TIME = setMinutes(setHours(selectedDate, endHour), 0)
+	const END_TIME = useMemo(() => setMinutes(setHours(selectedDate, endHour), 0), [selectedDate, endHour])
 	// calculated intervals
-	const hours = eachMinuteOfInterval(
+	const hours = useMemo(() => eachMinuteOfInterval(
 		{
 			start: START_TIME,
 			end: END_TIME,
 		},
-		{step: step}
-	)
+		{step}
+	), [START_TIME, END_TIME, step])
 
 	const handleGotoDay = (day: Date) => {
 		onDateChange?.(day)
