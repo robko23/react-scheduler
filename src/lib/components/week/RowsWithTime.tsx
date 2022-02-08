@@ -3,9 +3,10 @@ import { format } from "date-fns"
 import React, { Fragment, memo } from "react"
 import { useCalendarProps } from "../../hooks/useCalendarProps"
 import { GridTimeCell } from "../../styles/styles"
-import { Row, RowProps } from "./Row"
+import { EventRow, EventRowProps } from "./EventRow"
+import { Row } from "./Row"
 
-type Props = Omit<RowProps & {
+type Props = Omit<EventRowProps & {
 	hours: Date[],
 }, 'hour' | 'hourIndex'>
 
@@ -20,11 +21,22 @@ export const RowsWithTime = memo((props: Props) => {
 				</Typography>
 			</GridTimeCell>
 
-			<Row
-				{...props}
-				hour={hour}
-				hourIndex={hourIndex}
-			/>
+			{hourIndex === 0 ?
+				<EventRow
+					hour={hour}
+					startHour={props.startHour}
+					step={props.step}
+					cellRenderer={props.cellRenderer}
+					daysList={props.daysList}
+					/>
+				:
+				<Row
+					step={props.step}
+					cellRenderer={props.cellRenderer}
+					daysList={props.daysList}
+					hour={hour}
+				/>
+			}
 		</Fragment>
 	))
 

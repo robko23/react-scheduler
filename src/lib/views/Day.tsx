@@ -26,6 +26,7 @@ export interface DayProps {
 
 	cellRenderer?(props: CellRenderedProps): JSX.Element;
 }
+
 const Day = () => {
 	const {
 		day,
@@ -110,7 +111,7 @@ const Day = () => {
 					{renderMultiDayEvents(todayEvents)}
 				</GridHeaderCell>
 
-				<RowsWithTime daysList={[ selectedDate ]} step={step} events={todayEvents}
+				<RowsWithTime daysList={[ selectedDate ]} step={step}
 							  startHour={startHour} hours={hours}/>
 			</TableGrid>
 		)

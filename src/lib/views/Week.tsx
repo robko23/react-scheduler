@@ -150,7 +150,6 @@ const Week = () => {
 				<RowsWithTime
 					daysList={daysList}
 					hours={hours}
-					events={events}
 					startHour={startHour}
 					step={step}
 					cellRenderer={cellRenderer}

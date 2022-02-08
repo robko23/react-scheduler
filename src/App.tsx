@@ -28,8 +28,8 @@ const App = () => {
 				endHour: 15,
 			}}
 			week={{
-				startHour: 6,
-				endHour: 18,
+				startHour: 0,
+				endHour: 23,
 				step: 60,
 				weekDays: [ 0, 1, 2, 3, 4, 5, 6 ],
 				weekStartOn: 1

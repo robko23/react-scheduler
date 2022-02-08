@@ -10,7 +10,7 @@ import {
 	useTheme,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import React, { Fragment, memo, useState } from "react"
+import React, { Fragment, memo, ReactNode, useCallback, useState } from "react"
 import { TODAY } from "../../helpers/constants"
 import { getAvailableViews } from "../../helpers/generals"
 import { useCalendarProps } from "../../hooks/useCalendarProps"
@@ -30,9 +30,9 @@ const Toolbar = styled(MuiToolbar, {
 })
 
 export type RenderNavigationProps = {
-	dateSelector: JSX.Element,
-	todayButton: JSX.Element,
-	viewSelector: JSX.Element,
+	dateSelector: ReactNode,
+	todayButton: ReactNode,
+	viewSelector: ReactNode,
 	isDesktop: boolean
 }
 
@@ -49,7 +49,7 @@ const Navigation = memo(() => {
 		setAnchorEl(el || null)
 	}
 
-	const renderDateSelector = () => {
+	const renderDateSelector = useCallback(() => {
 		switch ( view ) {
 			case "month":
 				return (
@@ -69,7 +69,7 @@ const Navigation = memo(() => {
 			default:
 				return <></>
 		}
-	}
+	}, [view, selectedDate])
 
 	const dateSelector = renderDateSelector()
 	const todayButton = (
@@ -78,7 +78,7 @@ const Navigation = memo(() => {
 		</Button>
 	)
 
-	let viewSelector = <>{views.map((v) => (
+	let viewSelector: ReactNode = views.map((v) => (
 		<Button
 			key={v}
 			color={v === view ? "primary" : "inherit"}
@@ -90,7 +90,7 @@ const Navigation = memo(() => {
 		>
 			{getViewText(v, localizationTexts)}
 		</Button>
-	))}</>
+	))
 
 	if ( !isDesktop ) {
 		viewSelector = (
